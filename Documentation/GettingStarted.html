@@ -1,0 +1,100 @@
+<html>
+<head>
+<style>
+span {background-color: #FAF3F7; display: inline-block; width: 900px;
+       margin: 10px; padding: 25px; font-size: 16px}
+img  {padding: 5px; padding-right: 20px; height: 200px}
+</style>
+<title>AWU2UDDF - Getting Started</title>
+</head>
+<body>
+<h1>AWU2UDDF - Getting Started</h1>
+<span>
+<h2>Introduction</h2>
+<p>AWU2UDDF is used to export dive profile information that is collected
+on an Apple Watch Ultra to a Universal Dive Date Format (UDDF) XML file
+so it can be imported into <a href="https://www.subsurface-divelog.org">
+Subsurface</a> dive log, or any other dive log application that supports
+the UDDF format. AWU2UDDF uses depth samples stored by the Apple Watch
+Ultra in the HealthKit data store that is synchronized with a paired
+iPhone. It queries all of the underwater depth samples in the HealthKit
+data store and parses the samples into individual dives whenever there is
+more than a minute between samples. The Apple Watch Ultra stores
+underwater depth samples to the HealthKit data store every 2-3 seconds
+whenever it is submerged, even if there is no diving application running.
+</p>
+</span>
+
+<span>
+<h2>Prerequisites</h2>
+<ul>
+<li>An Apple Watch Ultra with diving data on it (this should work no
+no matter what diving app you were running, or even without a diving
+app running.)</li>
+<li>An iPhone that is paired with the Apple Watch Ultra running at 
+least iOS 16.0. This is the phone where you will install the AWU2UDDF
+application.</li>
+<li>In the current testing phase, you will need the Apple TestFlight
+application installed on your phone.</li>
+<li>An invitation to test the application through TestFlight. You can
+request an invitation by sending an email to
+<a href="mailto:douglas.junkins@gmail.com">douglas.junkins@gmail.com</a>.
+Please let me know how you heard about AWU2UDDF.</li>
+</ul>
+</span>
+
+<span>
+<h2>Authorizing Access to HealthKit Data</h2>
+<img src="Images/AuthButton.jpg" align=LEFT>
+<img src="Images/AuthScreen.jpg" align=LEFT>
+<p>The first time you run AWU2UDDF on your phone (or after new versions are 
+installed) you will need to authorize access to the Underwater Depth 
+information stored in the HealthKit data store. This is the only infomation
+that AWU2UDDF accesses.</p>
+<p>Do do this, press the orange "Authorize HealthKit" button. The HealthKit
+authorization page should appear. Here you can press the "Turn On All"
+option, to allow both read and right access to the depth information. The
+write access is only necessary to be able to detect that the app has been
+properly authorized -- we don't actually write any depth information into
+the HealthKit data sore. Then press "Allow" in the upper, right corner.</p>
+</span>
+
+<span>
+<h2>Exporting a Dive</h2>
+<img src="Images/DiveList.jpg" align=LEFT>
+<img src="Images/ExportScreen.jpg" align=LEFT>
+<p>Once you have authorized access to HealthKit, a list of dives that have
+been parsed from the Underwater Depth data will appear. You can simply select
+one of those dives by pressing on it, and the "Export Dive" screen should
+appear. Press the orange "Export Dive" button and you will be taken into a 
+file browser where you can choose where you want to store the exported file.
+Once you have chosen a location, you can press "Move" in the upper right 
+corner to save the file.</p>
+<p>If you save somewhere in the "iCloud Drive" location rather than the "On
+My Phone" location, you can then access the UDDF file directly from a Mac
+that connected to the same iCloud/AppleID account to import the UDDF file
+into the desktop version of Subsurface.</p>
+</span>
+
+<span>
+<h2>Caveats</h2>
+<ul>
+<li>I am only export depth profile information -- not water temperature
+or any application specific log information (e.g. Dive site). Adding water
+temperature should be fairly easy, but the application specific info will
+be a challenge unless the application vendors (e.g. Huish/Oceanic) publish
+an API</li>
+<li>The dive is exported in the timezone that the phone is currently set
+to, not the timezone of the location where the dive was done, so if you're
+on a dive trip, you may want to export the UDDF files before you get on a
+plane home or you will need to manually change the dive time when you
+import them into Subsurface.</li>
+<li>There are no settings or preferences yet, so the app currently
+displays depths in meters since that is the standard unit that the UDDF
+format uses. When you import the UDDF file into Subsurface, the units will
+be changed to match whatever you have in your preferences.</li>
+<li>The user interface is usable, but not "pretty".</li>
+</ul>
+</span>
+</body>
+</html>
