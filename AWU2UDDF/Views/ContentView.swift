@@ -21,10 +21,11 @@ struct ContentView: View {
 
                         Text("Dive List")
                             .font(.largeTitle)
+                            .fontWeight(.bold)
                     
                         Text("Total Dive Count: \(vm.diveList.count)")
-                        Spacer()
-                        Spacer()
+                       
+                    
                         HStack {
                             Text("Dive Time")
                                 .frame(width: 160, alignment: .leading)
@@ -36,10 +37,17 @@ struct ContentView: View {
                                 .frame(width: 60, alignment: .trailing)
                         }
 
-                        List (vm.diveList, id: \.self) { dive in
-                            NavigationLink(destination: DiveExportView(dive:dive)) {
-                                DiveRowView(dive: dive)
+                        if vm.diveList.count > 0 {
+                            List (vm.diveList, id: \.self) { dive in
+                                NavigationLink(destination: DiveExportView(dive:dive)) {
+                                    DiveRowView(dive: dive)
+                                }
                             }
+                        } else {
+                            Spacer()
+                            Text("No dive data in HealthKit").fontWeight(.bold)
+                            Spacer()
+                            Spacer()
                         }
                     }
                 }

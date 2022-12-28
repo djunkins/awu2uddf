@@ -14,6 +14,11 @@ struct DiveExportView: View {
     
     var body: some View {
         VStack {
+            Spacer()
+            Text("Export UDDF File")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+            Spacer()
             Text("Dive Time: \(dive.startTime.formatted())").font(.title3).padding()
             Text("Duration: \(Int((dive.Duration() + 59.0) / 60.0)) min").padding()
             Text("Max Depth: \(Int(dive.MaxDepth())) meters").padding()
@@ -37,6 +42,8 @@ struct DiveExportView: View {
                         print(error.localizedDescription)
                     }
                 }
+            Spacer()
+            Spacer()
         }
     }
 }
