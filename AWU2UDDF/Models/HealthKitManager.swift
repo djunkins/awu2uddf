@@ -11,8 +11,20 @@ import HealthKit
 class HealthKitManager {
     
     func setUpHealthRequest(healthStore: HKHealthStore, readDepths: @escaping () -> Void) {
-       if HKHealthStore.isHealthDataAvailable(), let underwaterDepth = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.underwaterDepth) {
-            healthStore.requestAuthorization(toShare: [underwaterDepth], read: [underwaterDepth]) { success, error in
+        
+        if HKHealthStore.isHealthDataAvailable(), let underwaterDepth = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.underwaterDepth) {
+
+            guard let waterTemp = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.waterTemperature) else {
+                print ("Water Temp Error")
+                return
+            }
+        
+            let healthKitTypesToRead: Set<HKObjectType> = [
+                underwaterDepth,
+                waterTemp
+            ]
+            
+            healthStore.requestAuthorization(toShare: [underwaterDepth], read: healthKitTypesToRead ) { success, error in
                 if success {
                     readDepths()
                 } else if error != nil {
@@ -20,7 +32,6 @@ class HealthKitManager {
                 }
             }
         }
-        
     }
     
     func readUnderwaterDepths(forToday: Date, healthStore: HKHealthStore, completion: @escaping ([Dive]) -> Void) {
@@ -41,7 +52,7 @@ class HealthKitManager {
                 completion([])
                 return
             }
-            
+
             if let diveDates = dates {
                 var diffSeconds: Double
                 if let lastDive = lastDiveEnd {
@@ -72,5 +83,32 @@ class HealthKitManager {
         healthStore.execute(query)
         
     }
-    
+
+    func readWaterTemps(forToday: Date, healthStore: HKHealthStore, completion: @escaping ([Temp_Sample]) -> Void) {
+        
+        var temps: [Temp_Sample] = []
+
+        guard let waterTempType = HKQuantityType.quantityType(forIdentifier: .waterTemperature) else { return }
+        
+        let query = HKQuantitySeriesSampleQuery(quantityType: waterTempType, predicate: nil) {
+            query, result, dates, samples, done, error  in
+
+            guard let result = result else {
+                print ("Nil Result to temperature query")
+                completion([])
+                return
+            }
+ 
+//            print ("Temp Dates: ", dates)
+//            print ("Temp Results: ", result)
+            
+            if let sampleDate = dates {
+                temps.append(Temp_Sample(start: sampleDate.start, end: sampleDate.end ,temp: result.doubleValue(for: HKUnit.degreeCelsius())))
+            }
+            completion(temps)
+        }
+        
+        healthStore.execute(query)
+        
+    }
 }

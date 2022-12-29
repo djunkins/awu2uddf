@@ -17,6 +17,7 @@
 		A41468E2295AB6890047B5EB /* DiveRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A41468E1295AB6890047B5EB /* DiveRowView.swift */; };
 		A41468E4295AB6AF0047B5EB /* DiveExportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A41468E3295AB6AF0047B5EB /* DiveExportView.swift */; };
 		A41468E7295ABA070047B5EB /* HealthKitViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A41468E6295ABA070047B5EB /* HealthKitViewModel.swift */; };
+		A435F66E295E35CA00FE88C6 /* TempModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A435F66D295E35CA00FE88C6 /* TempModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		A41468E3295AB6AF0047B5EB /* DiveExportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiveExportView.swift; sourceTree = "<group>"; };
 		A41468E5295AB7C10047B5EB /* AWU2UDDF.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AWU2UDDF.entitlements; sourceTree = "<group>"; };
 		A41468E6295ABA070047B5EB /* HealthKitViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitViewModel.swift; sourceTree = "<group>"; };
+		A435F66D295E35CA00FE88C6 /* TempModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +100,7 @@
 				A41468E6295ABA070047B5EB /* HealthKitViewModel.swift */,
 				A41468D9295AB5CA0047B5EB /* HealthKitManager.swift */,
 				A41468DB295AB5FD0047B5EB /* DiveModel.swift */,
+				A435F66D295E35CA00FE88C6 /* TempModel.swift */,
 				A41468DD295AB6280047B5EB /* UDDFModel.swift */,
 			);
 			path = Models;
@@ -176,6 +179,7 @@
 				A41468DE295AB6280047B5EB /* UDDFModel.swift in Sources */,
 				A41468E2295AB6890047B5EB /* DiveRowView.swift in Sources */,
 				A41468CC295AB5750047B5EB /* ContentView.swift in Sources */,
+				A435F66E295E35CA00FE88C6 /* TempModel.swift in Sources */,
 				A41468CA295AB5750047B5EB /* AWU2UDDFApp.swift in Sources */,
 				A41468E4295AB6AF0047B5EB /* DiveExportView.swift in Sources */,
 				A41468E7295ABA070047B5EB /* HealthKitViewModel.swift in Sources */,

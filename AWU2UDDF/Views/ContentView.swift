@@ -24,8 +24,7 @@ struct ContentView: View {
                             .fontWeight(.bold)
                     
                         Text("Total Dive Count: \(vm.diveList.count)")
-                       
-                    
+                        
                         HStack {
                             Text("Dive Time")
                                 .frame(width: 160, alignment: .leading)
@@ -39,7 +38,7 @@ struct ContentView: View {
 
                         if vm.diveList.count > 0 {
                             List (vm.diveList, id: \.self) { dive in
-                                NavigationLink(destination: DiveExportView(dive:dive)) {
+                                NavigationLink(destination: DiveExportView(dive:dive, temps: vm.temps)) {
                                     DiveRowView(dive: dive)
                                 }
                             }

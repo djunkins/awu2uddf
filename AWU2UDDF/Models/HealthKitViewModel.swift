@@ -13,9 +13,11 @@ class HealthKitViewModel: ObservableObject {
     private var healthStore = HKHealthStore()
     private var healthKitManager = HealthKitManager()
     @Published var diveList: [Dive] = []
+    @Published var temps: [Temp_Sample] = []
     @Published var isAuthorized = false
     
     init() {
+        temps = .init()
         changeAuthorizationStatus()
     }
     
@@ -57,6 +59,12 @@ class HealthKitViewModel: ObservableObject {
                     self.diveList = diveQuery
                 }
                 diveCount = diveQuery.count
+            }
+        }
+        healthKitManager.readWaterTemps(forToday: Date(), healthStore: healthStore) {
+            tempSamples in
+            DispatchQueue.main.async {
+                self.temps = tempSamples
             }
         }
     }

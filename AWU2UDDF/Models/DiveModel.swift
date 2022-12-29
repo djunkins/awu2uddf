@@ -64,8 +64,8 @@ class Dive: Identifiable, Hashable, Equatable {
         return duration
     }
        
-    func buildUDDF () -> String {
-        return uddfFile.buildUDDFString(startTime: self.startTime, profile: self.profile)
+    func buildUDDF (temps: [Temp_Sample]) -> String {
+        return uddfFile.buildUDDFString(startTime: self.startTime, profile: self.profile, temps: temps)
     }
     
     func defaultUDDFFilename () -> String {

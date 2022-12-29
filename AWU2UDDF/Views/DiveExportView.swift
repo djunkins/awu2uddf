@@ -10,6 +10,8 @@ import UniformTypeIdentifiers
 
 struct DiveExportView: View {
     let dive: Dive
+    let temps: [Temp_Sample]
+    
     @State var isExporting = false
     
     var body: some View {
@@ -34,7 +36,7 @@ struct DiveExportView: View {
             .background(Color(.orange))
             .cornerRadius(10)
             .padding()
-            .fileExporter(isPresented: $isExporting, document: UDDFFile(initialText: dive.buildUDDF()), contentType: UTType.xml, defaultFilename: dive.defaultUDDFFilename()) {      result in
+            .fileExporter(isPresented: $isExporting, document: UDDFFile(initialText: dive.buildUDDF(temps: temps)), contentType: UTType.xml, defaultFilename: dive.defaultUDDFFilename()) {      result in
                     switch result {
                     case .success(let url):
                         print("Saved to \(url)")
@@ -50,7 +52,7 @@ struct DiveExportView: View {
 
 struct DiveExportView_Previews: PreviewProvider {
     static var previews: some View {
-        DiveExportView(dive: Dive(startTime: Date.now))
+        DiveExportView(dive: Dive(startTime: Date.now), temps: [])
     }
 }
 
