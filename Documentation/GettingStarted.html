@@ -8,7 +8,12 @@ img  {padding: 5px; padding-right: 20px; height: 200px}
 <title>AWU2UDDF - Getting Started</title>
 </head>
 <body>
+<span>
 <h1>AWU2UDDF - Getting Started</h1>
+<p>Version: 1.1(1)</p>
+<p>Updated: December 29, 2022</p>
+</span>
+
 <span>
 <h2>Introduction</h2>
 <p>AWU2UDDF is used to export dive profile information that is collected
@@ -79,11 +84,10 @@ into the desktop version of Subsurface.</p>
 <span>
 <h2>Caveats</h2>
 <ul>
-<li>I am only exporting depth profile information -- not water temperature
-or any application specific log information (e.g. Dive site). Adding water
-temperature should be fairly easy, but the application specific info will
-be a challenge unless the application vendors (e.g. Huish/Oceanic) publish
-an API</li>
+<li>I am only exporting depth and temperature profile information from
+HealthKit -- not any diving application specific log information (e.g.
+Dive site). The application specific info will be a challenge unless the
+application vendors (e.g. Huish/Oceanic) publish an API.</li>
 <li>The dive is exported in the timezone that the phone is currently set
 to, not the timezone of the location where the dive was done, so if you're
 on a dive trip, you may want to export the UDDF files before you get on a
