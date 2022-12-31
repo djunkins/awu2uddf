@@ -16,6 +16,8 @@ class HealthKitViewModel: ObservableObject {
     @Published var temps: [Temp_Sample] = []
     @Published var isAuthorized = false
     
+    let debug: Bool = false
+    
     init() {
         temps = .init()
         changeAuthorizationStatus()
@@ -59,6 +61,13 @@ class HealthKitViewModel: ObservableObject {
                     self.diveList = diveQuery
                 }
                 diveCount = diveQuery.count
+            } else {
+                if self.debug {
+                    DispatchQueue.main.async {
+                        self.diveList = self.previewData()
+                    }
+                    diveCount = self.diveList.count
+                }
             }
         }
         healthKitManager.readWaterTemps(forToday: Date(), healthStore: healthStore) {
@@ -67,5 +76,43 @@ class HealthKitViewModel: ObservableObject {
                 self.temps = tempSamples
             }
         }
+    }
+    
+    func previewData() -> [Dive] {
+        var sampleDive: Dive
+        var sampleDives: [Dive] = []
+        
+        let dateString = "10/28/2000 14:38"
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MM/dd/yy HH:mm"
+        guard let startDate: Date = dateFormatter.date(from: dateString) else {
+            print ("Error making date")
+            return([])
+        }
+ 
+        var curDate = startDate
+        
+        sampleDive = .init(startTime: curDate)
+        
+        for i in stride(from: 1, to: 80, by: 1) {
+            let depth: Double = Double(i)
+            let endDate = curDate.addingTimeInterval(10)
+            
+            let sample: Depth_Sample = .init(start: curDate, end: endDate, depth: depth)
+            sampleDive.profile.append(sample)
+            curDate = endDate
+        }
+        for i in stride(from: 1, to: 80, by: 1) {
+            let depth: Double = Double(80-i)
+            let endDate = curDate.addingTimeInterval(10)
+            
+            let sample: Depth_Sample = .init(start: curDate, end: endDate, depth: depth)
+            sampleDive.profile.append(sample)
+            curDate = endDate
+        }
+        
+        sampleDives.append(sampleDive)
+        
+        return sampleDives
     }
 }

@@ -10,12 +10,17 @@ import SwiftUI
 struct DiveRowView: View {
     let dive: Dive
 
-
+    static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MM/dd/yy hh:mm a"
+        return formatter
+    }()
+    
     var body: some View {
         let duration = Int((dive.Duration() + 59.0) / 60.0)
         HStack {
-            Text(dive.startTime.formatted())
-                .frame(width: 170, alignment: .leading)
+            Text(DiveRowView.dateFormatter.string(from:dive.startTime))
+                .frame(width: 150, alignment: .leading)
             
             Text("\(duration) min")
                 .frame(width: 60, alignment: .trailing)

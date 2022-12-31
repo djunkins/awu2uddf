@@ -27,7 +27,7 @@ struct ContentView: View {
                         
                         HStack {
                             Text("Dive Time")
-                                .frame(width: 160, alignment: .leading)
+                                .frame(width: 140, alignment: .leading)
                             
                             Text("Duration")
                                 .frame(width: 70, alignment: .trailing)

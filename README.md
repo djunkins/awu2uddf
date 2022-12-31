@@ -1,6 +1,6 @@
 # awu2uddf
 
-This is the README file for AWU2UDDF version 1.1.1
+This is the README file for AWU2UDDF version 1.1.2
 
 AWU2UDDF is a simple app to export scuba diving depth and water temperature
 data collected by an Apple Watch Ultra and stored in Apple's HealthKit data
