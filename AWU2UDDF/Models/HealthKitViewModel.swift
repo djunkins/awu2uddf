@@ -63,7 +63,7 @@ class HealthKitViewModel: ObservableObject {
                 diveCount = diveQuery.count
             } else {
                 if self.debug {
-                    DispatchQueue.main.async {
+                    DispatchQueue.main.sync {
                         self.diveList = self.previewData()
                     }
                     diveCount = self.diveList.count
@@ -91,28 +91,33 @@ class HealthKitViewModel: ObservableObject {
         }
  
         var curDate = startDate
-        
-        sampleDive = .init(startTime: curDate)
-        
-        for i in stride(from: 1, to: 80, by: 1) {
-            let depth: Double = Double(i)
-            let endDate = curDate.addingTimeInterval(10)
+
+        for _ in stride (from: 1, to: 40, by: 1) {
             
-            let sample: Depth_Sample = .init(start: curDate, end: endDate, depth: depth)
-            sampleDive.profile.append(sample)
-            curDate = endDate
+            sampleDive = .init(startTime: curDate)
+
+            for i in stride(from: 1, to: 80, by: 1) {
+                let depth: Double = Double(i)
+                let endDate = curDate.addingTimeInterval(10)
+                
+                let sample: Depth_Sample = .init(start: curDate, end: endDate, depth: depth)
+                sampleDive.profile.append(sample)
+                curDate = endDate
+            }
+            for i in stride(from: 1, to: 80, by: 1) {
+                let depth: Double = Double(80-i)
+                let endDate = curDate.addingTimeInterval(10)
+                
+                let sample: Depth_Sample = .init(start: curDate, end: endDate, depth: depth)
+                sampleDive.profile.append(sample)
+                curDate = endDate
+            }
+
+            sampleDives.append(sampleDive)
+            curDate = curDate.addingTimeInterval(120)
+
         }
-        for i in stride(from: 1, to: 80, by: 1) {
-            let depth: Double = Double(80-i)
-            let endDate = curDate.addingTimeInterval(10)
-            
-            let sample: Depth_Sample = .init(start: curDate, end: endDate, depth: depth)
-            sampleDive.profile.append(sample)
-            curDate = endDate
-        }
-        
-        sampleDives.append(sampleDive)
-        
+        print ("Sample Dive Count: ", sampleDives.count)
         return sampleDives
     }
 }

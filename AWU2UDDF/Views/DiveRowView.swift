@@ -12,7 +12,7 @@ struct DiveRowView: View {
 
     static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "MM/dd/yy hh:mm a"
+        formatter.dateFormat = "MM/dd/yy h:mm a"
         return formatter
     }()
     

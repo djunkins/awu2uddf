@@ -37,7 +37,7 @@ class UDDF {
         xmlString += "    <manufacturer id=\"Foghead\">\n"
         xmlString += "      <name>Doug Junkins</name>\n"
         xmlString += "    </manufacturer>\n"
-        xmlString += "    <version>0.1</version>\n"
+        xmlString += "    <version>\(awu2uddf_version)</version>\n"
         xmlString += "  </generator>\n"
 
         return xmlString
