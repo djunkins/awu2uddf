@@ -57,14 +57,18 @@ class HealthKitViewModel: ObservableObject {
         healthKitManager.readUnderwaterDepths(forToday: Date(), healthStore: healthStore) {
             diveQuery in
             if diveQuery.count > diveCount {
+                let sortedDives = diveQuery.sorted(by: { $0.startTime.compare($1.startTime) == .orderedDescending })
                 DispatchQueue.main.async {
-                    self.diveList = diveQuery
+                    self.diveList = sortedDives
                 }
                 diveCount = diveQuery.count
             } else {
                 if self.debug {
+                    let sampleDives = self.previewData()
+                    let sortedDives = sampleDives.sorted(by: { $0.startTime.compare($1.startTime) == .orderedDescending })
+
                     DispatchQueue.main.sync {
-                        self.diveList = self.previewData()
+                        self.diveList = sortedDives
                     }
                     diveCount = self.diveList.count
                 }
