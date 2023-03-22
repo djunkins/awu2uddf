@@ -12,8 +12,10 @@ A quick "Getting Started" guide can be found at:
 
         https://awu2uddf.scuba-sites.com/GettingStarted.html
 
-AWU2UDDF is currently in beta testing phase. Please send an email to 
-awu2uddf@scuba-sites.com to request an invite to test the application using
-Apple's TestFlight application.
+AWU2UDDF 1.1 has been released in the Apple App Store and can be found at:
+
+	https://apps.apple.com/us/app/awu2uddf/id1661616210
+
+Please send an email to awu2uddf-support@scuba-sites.com with any questions.
 
 License: GPLv2
