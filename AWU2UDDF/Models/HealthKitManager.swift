@@ -39,7 +39,6 @@ class HealthKitManager {
         var diveList: [Dive] = []
         var lastDiveEnd: Date? = nil
         var thisDiveStart: Date?
-        
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy/MM/dd HH:mmZ"
         
@@ -66,6 +65,7 @@ class HealthKitManager {
                         print ("  Start Time: ", dateFormatter.string(from: thisDiveStart!))
                         print ("  Duration: ", Int((diveList.last!.Duration()+59.0)/60.0) as Any, "minutes")
                         print ("  Max Depth: ", Int(diveList.last!.MaxDepth()) as Any, "meters")
+                        print ("  Avg Depth: ", Int(diveList.last!.AvgDepth()) as Any, "meters")
                     }
                     thisDiveStart = diveDates.start
                     diveList.append(Dive(startTime: thisDiveStart!))
@@ -76,7 +76,11 @@ class HealthKitManager {
                 currentDive?.profile.append(Depth_Sample(start: diveDates.start, end: diveDates.end, depth: (result.doubleValue(for: HKUnit.meter()))))
             }
 
-            completion(diveList)
+            if (done) {
+                print("Completed dives query.")
+                completion(diveList)
+            }
+            
         
         }
         
@@ -105,7 +109,9 @@ class HealthKitManager {
             if let sampleDate = dates {
                 temps.append(Temp_Sample(start: sampleDate.start, end: sampleDate.end ,temp: result.doubleValue(for: HKUnit.degreeCelsius())))
             }
-            completion(temps)
+            if (done) {
+                completion(temps)
+            }
         }
         
         healthStore.execute(query)

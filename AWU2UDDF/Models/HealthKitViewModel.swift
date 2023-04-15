@@ -15,6 +15,7 @@ class HealthKitViewModel: ObservableObject {
     @Published var diveList: [Dive] = []
     @Published var temps: [Temp_Sample] = []
     @Published var isAuthorized = false
+    @Published var queriesCompleted = false
     
     let debug: Bool = false
     
@@ -26,7 +27,7 @@ class HealthKitViewModel: ObservableObject {
     func healthRequest() {
         healthKitManager.setUpHealthRequest(healthStore: healthStore) {
             self.changeAuthorizationStatus()
-            self.readDiveDepths()
+            self.readDiveData()
         }
     }
     
@@ -47,13 +48,17 @@ class HealthKitViewModel: ObservableObject {
             }
         @unknown default:
             isAuthorized = false
-      }
+        }
     }
     
-    func readDiveDepths() {
-        print ("Reading Dive Depths")
+    func readDiveData() {
+        print ("Reading Dive Data")
         var diveCount: Int = 0
+        var tempCount: Int = 0
         
+        let healthKitQueriesGroup = DispatchGroup()
+        
+        healthKitQueriesGroup.enter()
         healthKitManager.readUnderwaterDepths(forToday: Date(), healthStore: healthStore) {
             diveQuery in
             if diveQuery.count > diveCount {
@@ -66,21 +71,73 @@ class HealthKitViewModel: ObservableObject {
                 if self.debug {
                     let sampleDives = self.previewData()
                     let sortedDives = sampleDives.sorted(by: { $0.startTime.compare($1.startTime) == .orderedDescending })
-
-                    DispatchQueue.main.sync {
+                    
+                    DispatchQueue.main.async {
                         self.diveList = sortedDives
+                        diveCount = self.diveList.count
                     }
-                    diveCount = self.diveList.count
+                }
+            }
+            print("Completed dives query with ", diveCount, " samples.")
+            healthKitQueriesGroup.leave()
+        }
+        
+        healthKitQueriesGroup.enter()
+        healthKitManager.readWaterTemps(forToday: Date(), healthStore: healthStore) {
+            tempSamples in
+            print("Querying for temperatures...")
+            
+            DispatchQueue.main.async {
+                self.temps = tempSamples
+                tempCount = tempSamples.count
+                print("Completed temperature query with ", tempCount, " samples.")
+            }
+            healthKitQueriesGroup.leave()
+        }
+        
+        healthKitQueriesGroup.notify(queue: .main) {
+            self.finishAssemblingData()
+        }
+    }
+    
+    func finishAssemblingData() {
+        print("Finishing assembling dive profiles with ", diveList.count, " dives and ", temps.count, " temperature samples...")
+        
+        for dive in diveList {
+            for depthSample in dive.profile {
+                let sampleTemperature = searchTemps(date: depthSample.start, temps: temps)
+                if (sampleTemperature > 0) { // Temperatures are in Kelvin, so anything under zero is an error.
+                    depthSample.temperature = sampleTemperature
+                    
+                    if (sampleTemperature < dive.minTemp) {
+                        dive.minTemp = sampleTemperature
+                    }
+                    if (sampleTemperature > dive.maxTemp) {
+                        dive.maxTemp = sampleTemperature
+                    }
                 }
             }
         }
-        healthKitManager.readWaterTemps(forToday: Date(), healthStore: healthStore) {
-            tempSamples in
-            DispatchQueue.main.async {
-                self.temps = tempSamples
+        print("Finished assembling dive profiles.")
+
+        queriesCompleted = true
+    }
+
+    
+    
+    // Search for a temperature sample that has a particular start to the time interval
+    func searchTemps(date: Date, temps: [Temp_Sample]) -> Double {
+        for tempSample in temps {
+            if tempSample.start == date {
+                // matched a sample start time so return temperature
+                return tempSample.temp
             }
         }
+        
+        // return -999.9 if no matching sample is found
+        return -999.9
     }
+    
     
     func previewData() -> [Dive] {
         var sampleDive: Dive

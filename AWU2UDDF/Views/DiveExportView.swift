@@ -13,37 +13,53 @@ struct DiveExportView: View {
     let temps: [Temp_Sample]
     
     @State var isExporting = false
+    @State var isShowQr = false
     
     var body: some View {
         VStack {
             Spacer()
-            Text("Export UDDF File")
+            Text("Dive Summary")
                 .font(.largeTitle)
                 .fontWeight(.bold)
-            Spacer()
-            Text("Dive Time: \(dive.startTime.formatted())").font(.title3).padding()
-            Text("Duration: \(Int((dive.Duration() + 59.0) / 60.0)) min").padding()
-            Text("Max Depth: \(Int(dive.MaxDepth())) meters").padding()
+            Group {
+                Text("Dive Time: \(dive.startTime.formatted())").font(.title3).padding()
+                Text("Duration: \(Int((dive.Duration() + 59.0) / 60.0)) min").padding()
+                Text("Max Depth: \(String(format: "%.1f", dive.MaxDepth())) meters").padding()
+                Text("Avg Depth: \(String(format:"%.1f",dive.AvgDepth())) meters").padding()
+                Text("Min water temp: \(String(format:"%.1f", dive.MinTemp())) C").padding()
+                Text("Max water temp: \(String(format:"%.1f", dive.MaxTemp())) C").padding()
+
+            }
     
-            Button {
-                isExporting = true
-            } label: {
-                Text("Export Dive")
+            Spacer()
+            Button(action: {isExporting = true}, label: {
+                Text("Export As UDDF File")
                     .font(.headline)
                     .foregroundColor(.white)
-            }
-            .frame(width: 320, height: 55)
-            .background(Color(.orange))
-            .cornerRadius(10)
-            .padding()
-            .fileExporter(isPresented: $isExporting, document: UDDFFile(initialText: dive.buildUDDF(temps: temps)), contentType: UTType.xml, defaultFilename: dive.defaultUDDFFilename()) {      result in
-                    switch result {
-                    case .success(let url):
-                        print("Saved to \(url)")
-                    case .failure(let error):
-                        print(error.localizedDescription)
-                    }
-                }
+                    .frame(width: 320, height: 55)
+                    .background(Color(.orange))
+                    .cornerRadius(10)
+                    .padding()
+                    .fileExporter(isPresented: $isExporting, document: UDDFFile(initialText: dive.buildUDDF(temps: temps)), contentType: UTType.xml, defaultFilename: dive.defaultUDDFFilename()) {      result in
+                            switch result {
+                            case .success(let url):
+                                print("Saved to \(url)")
+                            case .failure(let error):
+                                print(error.localizedDescription)
+                            }
+                        }
+            })
+            /*Button(action: {
+                isShowQr = true
+            }, label: {
+                Text("Show SSI QR Code")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .frame(width: 320, height: 55)
+                    .background(Color(.red))
+                    .cornerRadius(10)
+                    .padding()
+            })*/
             Spacer()
             Spacer()
         }
@@ -52,7 +68,7 @@ struct DiveExportView: View {
 
 struct DiveExportView_Previews: PreviewProvider {
     static var previews: some View {
-        DiveExportView(dive: Dive(startTime: Date.now), temps: [])
+        DiveExportView(dive: Dive(startTime: Date.now), temps: [Temp_Sample(start: Date.now, end: Date.now, temp: 10)])
     }
 }
 

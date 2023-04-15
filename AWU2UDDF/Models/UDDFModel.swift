@@ -14,19 +14,6 @@ class UDDF {
     init() {
         self.uddfString = ""
     }
-    
-    // Search for a temperature sample that has a particular start to the time interval
-    func searchTemps(date: Date, temps: [Temp_Sample]) -> Double {
-        for tempSample in temps {
-            if tempSample.start == date {
-                // matched a sample start time so return temperature
-                return tempSample.temp
-            }
-        }
-        
-        // return -999.9 if no matching sample is found
-        return -999.9
-    }
 
     // Build the <generator> section of UDDF
     func generatorString() -> String {
@@ -90,16 +77,16 @@ class UDDF {
             let depthMeters = sample.depth
 
             // find the matching temperature sample if it exists
-            let tempCelcius = searchTemps(date: sample.start, temps: temps)
+            let tempKelvin = sample.temperature
 
             xmlString += "          <waypoint>\n"
             xmlString += "            <depth>" + String(format: "%.3f", depthMeters) + "</depth>\n"
             xmlString += "            <divetime>" + String(format: "%.3f",sampleTime) + "</divetime>\n"
 
             // Check if temperature sample exists, and if so add the <temperature> reading to UDDF
-            // string. UDDF measures temperatures in Kelvin, so add 273.15 to centrigrade temperature
-            if tempCelcius != -999.9 {
-                xmlString += "            <temperature>" + String(format: "%.1f", (tempCelcius + 273.15)) + "</temperature>\n"
+            // string. UDDF measures temperatures in Celsius, so add 273.15 to Kelvin temperature
+            if tempKelvin > 0 {
+                xmlString += "            <temperature>" + String(format: "%.1f", (tempKelvin + 273.15)) + "</temperature>\n"
             }
             xmlString += "          </waypoint>\n"
         }
@@ -113,7 +100,6 @@ class UDDF {
     }
     
     func buildUDDFString (startTime: Date, profile: [Depth_Sample], temps: [Temp_Sample]) -> String {
-        print ("Total Temps: \(temps.count)")
         self.uddfString = ""
         uddfString =  "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
         uddfString += "<uddf xmlns=\"http://www.streit.cc/uddf/3.2/\" version=\"3.2.0\">\n"

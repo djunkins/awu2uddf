@@ -36,15 +36,22 @@ struct ContentView: View {
                                 .frame(width: 60, alignment: .trailing)
                         }
 
-                        if vm.diveList.count > 0 {
-                            List (vm.diveList, id: \.self) { dive in
-                                NavigationLink(destination: DiveExportView(dive:dive, temps: vm.temps)) {
-                                    DiveRowView(dive: dive)
+                        if (vm.queriesCompleted) {
+                            if vm.diveList.count > 0 {
+                                List (vm.diveList, id: \.self) { dive in
+                                    NavigationLink(destination: DiveExportView(dive:dive, temps: vm.temps)) {
+                                        DiveRowView(dive: dive)
+                                    }
                                 }
+                            } else {
+                                Spacer()
+                                Text("No dive data in HealthKit").fontWeight(.bold)
+                                Spacer()
+                                Spacer()
                             }
                         } else {
                             Spacer()
-                            Text("No dive data in HealthKit").fontWeight(.bold)
+                            Text("Populating dive data...").fontWeight(.bold)
                             Spacer()
                             Spacer()
                         }
@@ -72,7 +79,7 @@ struct ContentView: View {
         }
         .padding()
         .onAppear {
-            vm.readDiveDepths()
+            vm.readDiveData()
         }
     
     }
