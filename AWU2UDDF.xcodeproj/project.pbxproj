@@ -18,6 +18,7 @@
 		A41468E4295AB6AF0047B5EB /* DiveExportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A41468E3295AB6AF0047B5EB /* DiveExportView.swift */; };
 		A41468E7295ABA070047B5EB /* HealthKitViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A41468E6295ABA070047B5EB /* HealthKitViewModel.swift */; };
 		A435F66E295E35CA00FE88C6 /* TempModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A435F66D295E35CA00FE88C6 /* TempModel.swift */; };
+		A97E27232A186C3A00C9F107 /* SsiQrCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97E27222A186C3A00C9F107 /* SsiQrCodeView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +35,7 @@
 		A41468E5295AB7C10047B5EB /* AWU2UDDF.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AWU2UDDF.entitlements; sourceTree = "<group>"; };
 		A41468E6295ABA070047B5EB /* HealthKitViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitViewModel.swift; sourceTree = "<group>"; };
 		A435F66D295E35CA00FE88C6 /* TempModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempModel.swift; sourceTree = "<group>"; };
+		A97E27222A186C3A00C9F107 /* SsiQrCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SsiQrCodeView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +92,7 @@
 				A41468CB295AB5750047B5EB /* ContentView.swift */,
 				A41468E1295AB6890047B5EB /* DiveRowView.swift */,
 				A41468E3295AB6AF0047B5EB /* DiveExportView.swift */,
+				A97E27222A186C3A00C9F107 /* SsiQrCodeView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -184,6 +187,7 @@
 				A41468E4295AB6AF0047B5EB /* DiveExportView.swift in Sources */,
 				A41468E7295ABA070047B5EB /* HealthKitViewModel.swift in Sources */,
 				A41468DA295AB5CA0047B5EB /* HealthKitManager.swift in Sources */,
+				A97E27232A186C3A00C9F107 /* SsiQrCodeView.swift in Sources */,
 				A41468DC295AB5FD0047B5EB /* DiveModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

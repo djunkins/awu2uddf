@@ -12,14 +12,14 @@ struct DiveRowView: View {
 
     static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "MM/dd/yy h:mm a"
+        formatter.dateFormat = "dd/mm/yy hh:mm"
         return formatter
     }()
     
     var body: some View {
         let duration = Int((dive.Duration() + 59.0) / 60.0)
         HStack {
-            Text(DiveRowView.dateFormatter.string(from:dive.startTime))
+            Text(dive.startTime.formatted())
                 .frame(width: 150, alignment: .leading)
             
             Text("\(duration) min")

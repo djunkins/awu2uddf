@@ -19,12 +19,45 @@ struct ContentView: View {
 
                     VStack {
 
-                        Text("Dive List")
+                        Text("Dive Tracker")
                             .font(.largeTitle)
                             .fontWeight(.bold)
                     
-                        Text("Total Dive Count: \(vm.diveList.count)")
-                        
+                        Text("Total  \(vm.allDivesList.count) dives (\(vm.onlyDeeperThan10mList.count) deep, \(vm.onlyShallowList.count) shallow)")
+                        HStack {
+                            
+                            Button(action: {vm.shownDivesList = vm.onlyDeeperThan10mList}, label: {
+                                Text("Deep")
+                                    .font(.headline)
+                                    .foregroundColor(.white)
+                                    .frame(width: 80, height: 30)
+                                    .background(Color(.orange))
+                                    .cornerRadius(10)
+                                    .padding()
+                                    
+                            })
+                            Button(action: {vm.shownDivesList = vm.onlyShallowList
+                            }, label: {
+                                Text("Shallow")
+                                    .font(.headline)
+                                    .foregroundColor(.white)
+                                    .frame(width: 80, height: 30)
+                                    .background(Color(.orange))
+                                    .cornerRadius(10)
+                                    .padding()
+                                    
+                            })
+                            Button(action: {vm.shownDivesList = vm.allDivesList}, label: {
+                                Text("All")
+                                    .font(.headline)
+                                    .foregroundColor(.white)
+                                    .frame(width: 80, height: 30)
+                                    .background(Color(.orange))
+                                    .cornerRadius(10)
+                                    .padding()
+                                    
+                            })
+                        }
                         HStack {
                             Text("Dive Time")
                                 .frame(width: 140, alignment: .leading)
@@ -32,13 +65,13 @@ struct ContentView: View {
                             Text("Duration")
                                 .frame(width: 70, alignment: .trailing)
 
-                            Text("Max Depth")
+                            Text("Depth")
                                 .frame(width: 60, alignment: .trailing)
                         }
 
                         if (vm.queriesCompleted) {
-                            if vm.diveList.count > 0 {
-                                List (vm.diveList, id: \.self) { dive in
+                            if vm.shownDivesList.count > 0 {
+                                List (vm.shownDivesList, id: \.self) { dive in
                                     NavigationLink(destination: DiveExportView(dive:dive, temps: vm.temps)) {
                                         DiveRowView(dive: dive)
                                     }

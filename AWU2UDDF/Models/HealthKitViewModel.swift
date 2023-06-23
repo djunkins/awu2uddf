@@ -12,7 +12,10 @@ class HealthKitViewModel: ObservableObject {
     
     private var healthStore = HKHealthStore()
     private var healthKitManager = HealthKitManager()
-    @Published var diveList: [Dive] = []
+    @Published var shownDivesList: [Dive] = []
+    @Published var allDivesList: [Dive] = []
+    @Published var onlyDeeperThan10mList: [Dive] = []
+    @Published var onlyShallowList: [Dive] = []
     @Published var temps: [Temp_Sample] = []
     @Published var isAuthorized = false
     @Published var queriesCompleted = false
@@ -64,7 +67,7 @@ class HealthKitViewModel: ObservableObject {
             if diveQuery.count > diveCount {
                 let sortedDives = diveQuery.sorted(by: { $0.startTime.compare($1.startTime) == .orderedDescending })
                 DispatchQueue.main.async {
-                    self.diveList = sortedDives
+                    self.allDivesList = sortedDives
                 }
                 diveCount = diveQuery.count
             } else {
@@ -73,8 +76,8 @@ class HealthKitViewModel: ObservableObject {
                     let sortedDives = sampleDives.sorted(by: { $0.startTime.compare($1.startTime) == .orderedDescending })
                     
                     DispatchQueue.main.async {
-                        self.diveList = sortedDives
-                        diveCount = self.diveList.count
+                        self.allDivesList = sortedDives
+                        diveCount = self.allDivesList.count
                     }
                 }
             }
@@ -101,9 +104,9 @@ class HealthKitViewModel: ObservableObject {
     }
     
     func finishAssemblingData() {
-        print("Finishing assembling dive profiles with ", diveList.count, " dives and ", temps.count, " temperature samples...")
+        print("Finishing assembling dive profiles with ", allDivesList.count, " dives and ", temps.count, " temperature samples...")
         
-        for dive in diveList {
+        for dive in allDivesList {
             for depthSample in dive.profile {
                 let sampleTemperature = searchTemps(date: depthSample.start, temps: temps)
                 if (sampleTemperature > 0) { // Temperatures are in Kelvin, so anything under zero is an error.
@@ -117,9 +120,21 @@ class HealthKitViewModel: ObservableObject {
                     }
                 }
             }
+            // Classify dives into deep ( >10m) and shallow
+            if dive.MaxDepth() > 9.9 {
+                onlyDeeperThan10mList.append(dive)
+            } else {
+                onlyShallowList.append(dive)
+            }
+        }
+        if !onlyDeeperThan10mList.isEmpty {
+            shownDivesList = onlyDeeperThan10mList
+        } else {
+            shownDivesList = onlyShallowList
         }
         print("Finished assembling dive profiles.")
-
+        
+        
         queriesCompleted = true
     }
 
