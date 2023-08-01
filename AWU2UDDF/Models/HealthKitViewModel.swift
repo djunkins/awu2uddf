@@ -36,18 +36,18 @@ class HealthKitViewModel: ObservableObject {
         
         print("Status is:", status)
         
-        switch status {
-        case .notDetermined:
-            isAuthorized = false
-        case .sharingDenied:
-            isAuthorized = false
-        case .sharingAuthorized:
-            DispatchQueue.main.async {
-                self.isAuthorized = true
+        DispatchQueue.main.async { [self] in
+            switch status {
+            case .notDetermined:
+                isAuthorized = false
+            case .sharingDenied:
+                isAuthorized = false
+            case .sharingAuthorized:
+                isAuthorized = true
+            @unknown default:
+                isAuthorized = false
             }
-        @unknown default:
-            isAuthorized = false
-      }
+        }
     }
     
     func readDiveDepths() {
