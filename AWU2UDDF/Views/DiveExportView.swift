@@ -31,8 +31,8 @@ struct DiveExportView: View {
                 Text("Export Dive")
                     .font(.headline)
                     .foregroundColor(.white)
+                    .frame(width: 320, height: 55)
             }
-            .frame(width: 320, height: 55)
             .background(Color(.orange))
             .cornerRadius(10)
             .padding()
