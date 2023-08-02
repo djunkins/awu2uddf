@@ -37,16 +37,8 @@ class HealthKitViewModel: ObservableObject {
         print("Status is:", status)
         
         DispatchQueue.main.async { [self] in
-            switch status {
-            case .notDetermined:
-                isAuthorized = false
-            case .sharingDenied:
-                isAuthorized = false
-            case .sharingAuthorized:
-                isAuthorized = true
-            @unknown default:
-                isAuthorized = false
-            }
+            // Because the app only asks for read permission, not to write ("share") anything, status will either be `notDetermined` or `sharingDenied`
+            isAuthorized = status != .notDetermined
         }
     }
     
