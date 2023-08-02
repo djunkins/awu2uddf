@@ -20,11 +20,14 @@ let awu2uddf_version = "1.1(3)"
 @main
 struct AWU2UDDFApp: App {
     var healthVM = HealthKitViewModel()
-
+    
+    var settings = Settings()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(healthVM)
+                .environmentObject(settings)
        }
     }
 }
