@@ -12,6 +12,11 @@ struct ContentView: View {
     @State private var selection: Dive.ID?
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
+    @State private var showFilter: Bool = false
+    @State private var filterShortDives: Bool = false
+    @State private var filterDateStart: Date = Date.distantPast
+    @State private var filterDateEnd: Date = Date.now
+    
     var body: some View {
         VStack {
             if vm.isAuthorized {
@@ -25,6 +30,45 @@ struct ContentView: View {
                     
                         Text("Total Dive Count: \(vm.diveList.count)")
                         
+                        if showFilter {
+                            HStack {
+                                VStack {
+                                    
+                                    Toggle("Longer than five minutes", isOn: $filterShortDives)
+                                    
+                                    
+                                    HStack {
+                                        DatePicker("", selection: $filterDateStart,
+                                                   in: Date.distantPast...filterDateEnd,
+                                                   displayedComponents: .date)
+                                        Text(" to ").minimumScaleFactor(0.5)
+                                        DatePicker("", selection: $filterDateEnd,
+                                                   in: filterDateStart...Date.now,
+                                                   displayedComponents: .date)
+                                    }
+                                }
+                                
+                                Spacer()
+                                
+                                Button {
+                                    showFilter = false
+                                } label: {
+                                    Image(systemName: "line.3.horizontal.decrease.circle.fill")
+                                }
+                            }
+                        } else {
+                            HStack {
+                                Spacer()
+                                
+                                Button {
+                                    filterDateStart = vm.diveList.last?.startTime ?? Date.now
+                                    showFilter = true
+                                } label: {
+                                    Image(systemName: "line.3.horizontal.decrease.circle")
+                                }
+                            }
+                        }
+                        
                         HStack {
                             Text("Dive Time")
                                 .frame(width: 140, alignment: .leading)
@@ -37,7 +81,10 @@ struct ContentView: View {
                         }
 
                         if vm.diveList.count > 0 {
-                            List (vm.diveList, id: \.self) { dive in
+                            List (vm.diveList
+                                .filter({ dive in !filterShortDives || dive.Duration() > 300 })
+                                .filter({ dive in dive.startTime > filterDateStart && dive.startTime < filterDateEnd}),
+                                  id: \.self) { dive in
                                 NavigationLink(destination: DiveExportView(dive:dive, temps: vm.temps)) {
                                     DiveRowView(dive: dive)
                                 }
