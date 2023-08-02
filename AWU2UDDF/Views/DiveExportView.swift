@@ -14,6 +14,8 @@ struct DiveExportView: View {
     
     @State var isExporting = false
     
+    @EnvironmentObject var settings: Settings
+    
     var body: some View {
         VStack {
             Spacer()
@@ -21,9 +23,10 @@ struct DiveExportView: View {
                 .font(.largeTitle)
                 .fontWeight(.bold)
             Spacer()
-            Text("Dive Time: \(dive.startTime.formatted())").font(.title3).padding()
+            Text("Dive Time: \(settings.dateFormatter.string(from: dive.startTime))")
+                .font(.title3).padding()
             Text("Duration: \(Int((dive.Duration() + 59.0) / 60.0)) min").padding()
-            Text("Max Depth: \(Int(dive.MaxDepth())) meters").padding()
+            Text("Max Depth: \(settings.displayDepth(metres: dive.MaxDepth(), shortUnits: false))").padding()
     
             Button {
                 isExporting = true
@@ -36,7 +39,7 @@ struct DiveExportView: View {
             .background(.orange)
             .cornerRadius(10)
             .padding()
-            .fileExporter(isPresented: $isExporting, document: UDDFFile(initialText: dive.buildUDDF(temps: temps)), contentType: UTType.xml, defaultFilename: dive.defaultUDDFFilename()) {      result in
+            .fileExporter(isPresented: $isExporting, document: UDDFFile(initialText: dive.buildUDDF(temps: temps)), contentType: UTType.xml, defaultFilename: dive.defaultUDDFFilename()) { result in
                     switch result {
                     case .success(let url):
                         print("Saved to \(url)")

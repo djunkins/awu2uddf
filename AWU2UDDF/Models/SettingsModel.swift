@@ -55,6 +55,14 @@ enum DisplayUnits {
         }
     }
     
+    func depthUnitLong() -> String {
+        switch self {
+        case .imperial, .canadian:
+            return "feet"
+        case .metric:
+            return "metres"
+        }
+    }
 }
 
 class Settings: ObservableObject {
@@ -95,15 +103,10 @@ class Settings: ObservableObject {
         }
     }
     
-    func displayDepth(metres: Double) -> String {
+    func displayDepth(metres: Double, shortUnits: Bool = true) -> String {
         let nf = NumberFormatter()
         nf.allowsFloats = true
         nf.maximumFractionDigits = 1
-        switch displayUnits {
-        case .imperial, .canadian:
-            return "\(nf.string(for: (metres * 3.28))!) ft"
-        case .metric:
-            return "\(nf.string(for: metres)!) m"
-        }
+        return "\(nf.string(for: metresToDistance(metres))!) \(shortUnits ? displayUnits.depthUnit() : displayUnits.depthUnitLong())"
     }
 }
