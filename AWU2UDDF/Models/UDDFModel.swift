@@ -7,107 +7,161 @@
 
 import Foundation
 
-// Class for building a UDDF XML string to store in file.
-class UDDF {
-    var uddfString: String
-    
-    init() {
-        self.uddfString = ""
+extension String {
+    func repeating(times: Int) -> String {
+        Array(repeating: self, count: times).joined(separator: "")
     }
+}
+
+struct XMLNode {
+    enum Child {
+        case text(String)
+        case xml(XMLNode)
+        
+        func emit(depth: Int = 0) -> String {
+            switch self {
+            case let .text(content):
+                return "    ".repeating(times: depth) + content
+            case let .xml(xml):
+                return xml.emit(depth: depth)
+            }
+        }
+    }
+    let title: String
+    let attributes: [String:String]?
+    let children: [Child]
+    
+    init(title: String, attributes: [String : String]?, children: [XMLNode]) {
+        self.title = title
+        self.attributes = attributes
+        self.children = children.map({ .xml($0) })
+    }
+    
+    init(title: String, children: [XMLNode]) {
+        self.title = title
+        self.attributes = nil
+        self.children = children.map({ .xml($0) })
+    }
+    
+    init(title: String, textContent: String) {
+        self.title = title
+        self.attributes = nil
+        self.children = [.text(textContent)]
+    }
+    
+    private func emitAttrs() -> String {
+        if let attrs = attributes {
+            return attrs.map({ (key, val) in " \(key)=\"\(val)\"" }).joined(separator: "")
+        } else {
+            return ""
+        }
+    }
+    
+    func emit(depth: Int = 0) -> String {
+        let open = "\("    ".repeating(times: depth))<\(title)\(emitAttrs())"
+        let after: String
+        if children.count == 0 {
+            after = "/>"
+        } else if children.count == 1,
+                  case let .text(content) = children.first! {
+            after = ">\(content)</\(title)>"
+        } else {
+            after = """
+            >
+            \(children.map({ $0.emit(depth: depth + 1) }).joined(separator: "\n"))
+            \("    ".repeating(times: depth))</\(title)>
+            """
+        }
+        return open + after
+    }
+}
+
+struct XMLDocument {
+    let rootNode: XMLNode
+    
+    func emit() -> String {
+        return """
+        <?xml version="1.0" encoding="utf-8"?>
+        \(rootNode.emit())
+        """
+    }
+}
+
+// Class for building a UDDF XML string to store in file.
+// TODO: this could now just be a stand-alone function, it has no state...maybe a single static method
+class UDDF {
     
     // Build the <generator> section of UDDF
-    func generatorString() -> String {
-        var xmlString = ""
-        
-        xmlString += "  <generator>\n"
-        xmlString += "    <name>awu2uddf</name>\n"
-        xmlString += "    <manufacturer id=\"Foghead\">\n"
-        xmlString += "      <name>Doug Junkins</name>\n"
-        xmlString += "    </manufacturer>\n"
-        xmlString += "    <version>\(awu2uddf_version)</version>\n"
-        xmlString += "  </generator>\n"
-
-        return xmlString
+    func generatorElem() -> XMLNode {
+        return XMLNode(title: "generator",
+                       children: [
+                        XMLNode(title: "name", textContent: "awu2uddf"),
+                        XMLNode(title: "manufacturer",
+                                attributes: ["id": "Foghead"],
+                                children: [XMLNode(title: "name", textContent: "Doug Junkins")]),
+                        XMLNode(title: "version", textContent: awu2uddf_version)])
     }
-
+    
     // Build the <diver> section of UDDF
-    func diverString() -> String {
-        var xmlString = ""
-        
-        xmlString += "  <diver>\n"
-        xmlString += "    <owner id=\"owner\">\n"
-        xmlString += "      <personal>\n"
-        xmlString += "        <firstname/>\n"
-        xmlString += "        <lastname/>\n"
-        xmlString += "      </personal>\n"
-        xmlString += "      <equipment>\n"
-        xmlString += "        <divecomputer id=\"81333b70\">\n"
-        xmlString += "          <name>Apple Watch Ultra</name>\n"
-        xmlString += "          <model>Apple Watch Ultra</model>\n"
-        xmlString += "        </divecomputer>\n"
-        xmlString += "      </equipment>\n"
-        xmlString += "    </owner>\n"
-        xmlString += "    <buddy/>\n"
-        xmlString += "  </diver>\n"
-
-        return xmlString
-
+    func diverElem() -> XMLNode {
+        return XMLNode(title: "diver",
+                       children: [
+                        XMLNode(title: "owner", attributes: ["id": "owner"],
+                                children: [
+                                    XMLNode(title: "personal",
+                                            children: [
+                                                XMLNode(title: "firstname", children: []),
+                                                XMLNode(title: "lastname", children: [])]),
+                                    XMLNode(title: "equipment",
+                                            children: [
+                                                XMLNode(title: "divecomputer",
+                                                        attributes: ["id": "81333b70"],
+                                                        children: [
+                                                            XMLNode(title: "name", textContent: "Apple Watch Ultra"),
+                                                            XMLNode(title: "model", textContent: "Apple Watch Ultra")])])]),
+                        XMLNode(title: "buddy", children: [])])
     }
-
+    
     // Build the <profile> section of UDDF by matching depth samples with temperature samples
-    func profileDataString(startTime: Date, profile: [DepthSample], temps: [Date:TemperatureSample]) -> String {
-        var xmlString = ""
-
-        xmlString += "  <profiledata>\n"
-        xmlString += "    <repetitiongroup id=\"" + startTime.ISO8601Format() + "\">\n"
-        xmlString += "      <dive id=\"" + startTime.ISO8601Format() + "\">\n"
-        xmlString += "        <informationbeforedive>\n"
-
-        // Use the Dive class start time as the UDDF <datetime> field
-        xmlString += "          <datetime>" + startTime.getFormattedDate(format: "yyyy-MM-dd'T'HH:mm:ssZ") + "</datetime>\n"
-        xmlString += "        </informationbeforedive>\n"
-        xmlString += "        <samples>\n"
-        
-        for sample in profile {
-            // for each sample, convert the to a divetime offset by subtracting the dive start time
-            // from the sample end time. Maybe this should be changed to the average of the sample
-            // start time and sample end time?
-            let sampleTime = sample.end.timeIntervalSinceReferenceDate - startTime.timeIntervalSinceReferenceDate
-
-            let depthMeters = sample.depth
-
-            xmlString += "          <waypoint>\n"
-            xmlString += "            <depth>" + String(format: "%.3f", depthMeters) + "</depth>\n"
-            xmlString += "            <divetime>" + String(format: "%.3f",sampleTime) + "</divetime>\n"
-
-            // Check if temperature sample exists, and if so add the <temperature> reading to UDDF
-            // string. UDDF measures temperatures in Kelvin, so add 273.15 to centrigrade temperature
-            if let tempSample = temps[sample.start] {
-                xmlString += "            <temperature>" + String(format: "%.1f", (tempSample.temp + 273.15)) + "</temperature>\n"
+    func profileDataElements(startTime: Date, profile: [DepthSample], temps: [Date:TemperatureSample]) -> XMLNode {
+        let samples = profile.map({ depthSample in
+            var children = [XMLNode(title: "depth", textContent: String(format: "%.3f", depthSample.depth)),
+                            XMLNode(title: "divetime",
+                                    textContent: String(format: "%.3f", depthSample.end.timeIntervalSinceReferenceDate - startTime.timeIntervalSinceReferenceDate))]
+            if let tempSample = temps[depthSample.start] {
+                // UDDF measures temperatures in Kelvin, so add 273.15 to centrigrade temperature
+                children.append(XMLNode(title: "temperature", textContent: String(format: "%.1f", tempSample.temp + 273.15)))
             }
-            xmlString += "          </waypoint>\n"
-        }
+            return XMLNode(title: "waypoint", children: children)
+        })
         
-        xmlString += "        </samples>\n"
-        xmlString += "      </dive>\n"
-        xmlString += "    </repetitiongroup>\n"
-        xmlString += "  </profiledata>\n"
-
-        return xmlString
+        return XMLNode(title: "profiledata",
+                       children: [
+                        XMLNode(title: "repetitiongroup", attributes: ["id": startTime.ISO8601Format()],
+                                children: [
+                                    XMLNode(title: "dive", attributes: ["id": startTime.ISO8601Format()],
+                                            children: [
+                                                XMLNode(title: "informationbeforedive",
+                                                        children: [XMLNode(title: "datetime",
+                                                                           textContent: startTime.getFormattedDate(format: "yyyy-MM-dd'T'HH:mm:ssZ"))]),
+                                                XMLNode(title: "samples", children: samples)])])])
     }
     
     func buildUDDFString (startTime: Date, profile: [DepthSample], temps: [TemperatureSample]) -> String {
         print ("Total Temps: \(temps.count)")
         let tempsByDate = Dictionary(grouping: temps, by: { temp in temp.start }).mapValues({ $0.first! })
-        self.uddfString = ""
-        uddfString =  "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-        uddfString += "<uddf xmlns=\"http://www.streit.cc/uddf/3.2/\" version=\"3.2.0\">\n"
-        uddfString += generatorString()
-        uddfString += diverString()
-        uddfString += "  <divesite/>\n"
-        uddfString += "  <gasdefinitions/>\n"
-        uddfString += profileDataString(startTime: startTime, profile: profile, temps: tempsByDate)
-        uddfString += "</uddf>\n"
-        return self.uddfString
+        let doc = XMLDocument(rootNode:
+                                XMLNode(title: "uddf",
+                                        attributes: ["xmlns": "http://www.streit.cc/uddf/3.2/",
+                                                     "version": "3.2.0"],
+                                        children: [
+                                            generatorElem(),
+                                            diverElem(),
+                                            XMLNode(title: "divesite", children: []),
+                                            XMLNode(title: "gasdefinitions", children: []),
+                                            profileDataElements(startTime: startTime, profile: profile, temps: tempsByDate),
+                                        ]))
+        
+        return doc.emit()
     }
 }
