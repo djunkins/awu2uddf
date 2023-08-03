@@ -8,7 +8,7 @@
 import Foundation
 import HealthKit
 
-class Depth_Sample {
+class DepthSample {
     var start : Date
     var end : Date
     var depth: Double
@@ -22,7 +22,7 @@ class Depth_Sample {
 
 class Dive: Identifiable, Hashable, Equatable {
     var startTime : Date
-    var profile: [Depth_Sample] = []
+    var profile: [DepthSample] = []
     var uddfFile: UDDF
     
     init (startTime: Date) {

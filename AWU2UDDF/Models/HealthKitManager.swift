@@ -73,7 +73,7 @@ class HealthKitManager {
                 lastDiveEnd = diveDates.end
                 let currentDive = diveList.last
                 
-                currentDive?.profile.append(Depth_Sample(start: diveDates.start, end: diveDates.end, depth: (result.doubleValue(for: HKUnit.meter()))))
+                currentDive?.profile.append(DepthSample(start: diveDates.start, end: diveDates.end, depth: (result.doubleValue(for: HKUnit.meter()))))
             }
 
             completion(diveList)
