@@ -84,9 +84,9 @@ class HealthKitManager {
         
     }
 
-    func readWaterTemps(forToday: Date, healthStore: HKHealthStore, completion: @escaping ([Temp_Sample]) -> Void) {
+    func readWaterTemps(forToday: Date, healthStore: HKHealthStore, completion: @escaping ([TemperatureSample]) -> Void) {
         
-        var temps: [Temp_Sample] = []
+        var temps: [TemperatureSample] = []
 
         guard let waterTempType = HKQuantityType.quantityType(forIdentifier: .waterTemperature) else { return }
         
@@ -103,7 +103,7 @@ class HealthKitManager {
 //            print ("Temp Results: ", result)
             
             if let sampleDate = dates {
-                temps.append(Temp_Sample(start: sampleDate.start, end: sampleDate.end ,temp: result.doubleValue(for: HKUnit.degreeCelsius())))
+                temps.append(TemperatureSample(start: sampleDate.start, end: sampleDate.end ,temp: result.doubleValue(for: HKUnit.degreeCelsius())))
             }
             completion(temps)
         }

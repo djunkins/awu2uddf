@@ -13,7 +13,7 @@ class HealthKitViewModel: ObservableObject {
     private var healthStore = HKHealthStore()
     private var healthKitManager = HealthKitManager()
     @Published var diveList: [Dive] = []
-    @Published var temps: [Temp_Sample] = []
+    @Published var temps: [TemperatureSample] = []
     @Published var isAuthorized = false
     
     let debug: Bool = false

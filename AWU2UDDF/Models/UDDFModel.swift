@@ -16,7 +16,7 @@ class UDDF {
     }
     
     // Search for a temperature sample that has a particular start to the time interval
-    func searchTemps(date: Date, temps: [Temp_Sample]) -> Double {
+    func searchTemps(date: Date, temps: [TemperatureSample]) -> Double {
         for tempSample in temps {
             if tempSample.start == date {
                 // matched a sample start time so return temperature
@@ -68,7 +68,7 @@ class UDDF {
     }
 
     // Build the <profile> section of UDDF by matching depth samples with temperature samples
-    func profileDataString(startTime: Date, profile: [Depth_Sample], temps: [Temp_Sample]) -> String {
+    func profileDataString(startTime: Date, profile: [Depth_Sample], temps: [TemperatureSample]) -> String {
         var xmlString = ""
 
         xmlString += "  <profiledata>\n"
@@ -112,7 +112,7 @@ class UDDF {
         return xmlString
     }
     
-    func buildUDDFString (startTime: Date, profile: [Depth_Sample], temps: [Temp_Sample]) -> String {
+    func buildUDDFString (startTime: Date, profile: [Depth_Sample], temps: [TemperatureSample]) -> String {
         print ("Total Temps: \(temps.count)")
         self.uddfString = ""
         uddfString =  "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"

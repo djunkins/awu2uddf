@@ -7,7 +7,7 @@
 
 import Foundation
 
-class Temp_Sample {
+class TemperatureSample {
     var start : Date
     var end : Date
     var temp: Double

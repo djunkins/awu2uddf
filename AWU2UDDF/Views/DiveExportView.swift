@@ -10,7 +10,7 @@ import UniformTypeIdentifiers
 
 struct DiveExportView: View {
     let dive: Dive
-    let temps: [Temp_Sample]
+    let temps: [TemperatureSample]
     
     @State var isExporting = false
     
