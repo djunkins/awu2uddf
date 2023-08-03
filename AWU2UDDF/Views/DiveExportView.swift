@@ -12,7 +12,18 @@ struct DiveExportView: View {
     let dive: Dive
     let temps: [TemperatureSample]
     
-    @State var isExporting = false
+    @State private var isExporting = false
+    
+    @State private var exportDocument: UDDFFile? = nil
+    
+    private func generateExportDocument() {
+        DispatchQueue.global(qos: .userInitiated).async { [self] in
+            let document = UDDFFile(initialText: dive.buildUDDF(temps: temps))
+            DispatchQueue.main.async { [self] in
+                self.exportDocument = document
+            }
+        }
+    }
     
     @EnvironmentObject var settings: Settings
     
@@ -29,18 +40,21 @@ struct DiveExportView: View {
             Text("Max Depth: \(settings.displayDepth(metres: dive.maxDepth(), shortUnits: false))").padding()
             Text("Average Depth: \(settings.displayDepth(metres: dive.avgDepth(), shortUnits: false))").padding()
     
-            Button {
-                isExporting = true
-            } label: {
-                Text("Export Dive")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .frame(width: 320, height: 55)
-            }
-            .background(.orange)
-            .cornerRadius(10)
-            .padding()
-            .fileExporter(isPresented: $isExporting, document: UDDFFile(initialText: dive.buildUDDF(temps: temps)), contentType: UTType.xml, defaultFilename: dive.defaultUDDFFilename()) { result in
+            ZStack {
+                Button {
+                    isExporting = true
+                } label: {
+                    Text("Export Dive")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .frame(width: 320, height: 55)
+                }
+                .background(.orange)
+                .cornerRadius(10)
+                .padding()
+                .opacity(exportDocument == nil ? 0.5 : 1)
+                .disabled(exportDocument == nil)
+                .fileExporter(isPresented: $isExporting, document: exportDocument, contentType: UTType.xml, defaultFilename: dive.defaultUDDFFilename()) {      result in
                     switch result {
                     case .success(let url):
                         print("Saved to \(url)")
@@ -48,9 +62,14 @@ struct DiveExportView: View {
                         print(error.localizedDescription)
                     }
                 }
-            Spacer()
-            Spacer()
-        }
+                if exportDocument == nil {
+                    ProgressView()
+                }
+            }
+                Spacer()
+                Spacer()
+            }
+        .onAppear(perform: self.generateExportDocument)
     }
 }
 
