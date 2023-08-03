@@ -42,8 +42,9 @@ class Dive: Identifiable, Hashable, Equatable {
         return profile.max(by: { s1, s2 in s1.depth <= s2.depth })?.depth ?? 0
     }
     
-    func avgDepth() {
-        
+    func avgDepth() -> Double {
+        guard profile.count > 0 else { return 0 }
+        return profile.reduce(0, { total, sample in total + sample.depth }) / Double(profile.count)
     }
     
     func duration () -> Double {
