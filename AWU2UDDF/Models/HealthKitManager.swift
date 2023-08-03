@@ -64,8 +64,8 @@ class HealthKitManager {
                     if (diveList.isEmpty == false) {
                         print ("Dive Summary")
                         print ("  Start Time: ", dateFormatter.string(from: thisDiveStart!))
-                        print ("  Duration: ", Int((diveList.last!.Duration()+59.0)/60.0) as Any, "minutes")
-                        print ("  Max Depth: ", Int(diveList.last!.MaxDepth()) as Any, "meters")
+                        print ("  Duration: ", Int((diveList.last!.duration()+59.0)/60.0) as Any, "minutes")
+                        print ("  Max Depth: ", Int(diveList.last!.maxDepth()) as Any, "meters")
                     }
                     thisDiveStart = diveDates.start
                     diveList.append(Dive(startTime: thisDiveStart!))

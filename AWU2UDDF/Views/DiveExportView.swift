@@ -25,7 +25,7 @@ struct DiveExportView: View {
             Spacer()
             Text("Dive Time: \(settings.dateFormatter.string(from: dive.startTime))")
                 .font(.title3).padding()
-            Text("Duration: \(Int((dive.Duration() + 59.0) / 60.0)) min").padding()
+            Text("Duration: \(Int((dive.duration() + 59.0) / 60.0)) min").padding()
             Text("Max Depth: \(settings.displayDepth(metres: dive.MaxDepth(), shortUnits: false))").padding()
     
             Button {

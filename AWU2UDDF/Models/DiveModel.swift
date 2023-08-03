@@ -38,7 +38,7 @@ class Dive: Identifiable, Hashable, Equatable {
         return lhs.startTime == rhs.startTime
     }
     
-    func MaxDepth () -> Double {
+    func maxDepth() -> Double {
         var maxDepth = 0.0
         
         for sample in self.profile {
@@ -50,11 +50,11 @@ class Dive: Identifiable, Hashable, Equatable {
         
     }
     
-    func AvgDepth () {
+    func avgDepth() {
         
     }
     
-    func Duration () -> Double {
+    func duration () -> Double {
         guard let endTime = profile.last?.end else {
             return 0.0
         }
