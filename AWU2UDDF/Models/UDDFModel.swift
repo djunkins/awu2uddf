@@ -27,18 +27,18 @@ struct XMLNode {
             }
         }
     }
-    let title: String
+    let tag: String
     let attributes: [String:String]?
     let children: [Child]
     
-    init(title: String, attributes: [String : String]? = nil, children: [XMLNode] = []) {
-        self.title = title
+    init(tag: String, attributes: [String : String]? = nil, children: [XMLNode] = []) {
+        self.tag = tag
         self.attributes = attributes
         self.children = children.map({ .xml($0) })
     }
     
-    init(title: String, textContent: String) {
-        self.title = title
+    init(tag: String, textContent: String) {
+        self.tag = tag
         self.attributes = nil
         self.children = [.text(textContent)]
     }
@@ -52,18 +52,18 @@ struct XMLNode {
     }
     
     func emit(depth: Int = 0) -> String {
-        let open = "\("    ".repeating(times: depth))<\(title)\(emitAttrs())"
+        let open = "\("    ".repeating(times: depth))<\(tag)\(emitAttrs())"
         let after: String
         if children.count == 0 {
             after = "/>"
         } else if children.count == 1,
                   case let .text(content) = children.first! {
-            after = ">\(content)</\(title)>"
+            after = ">\(content)</\(tag)>"
         } else {
             after = """
             >
             \(children.map({ $0.emit(depth: depth + 1) }).joined(separator: "\n"))
-            \("    ".repeating(times: depth))</\(title)>
+            \("    ".repeating(times: depth))</\(tag)>
             """
         }
         return open + after
@@ -87,70 +87,70 @@ class UDDF {
     
     // Build the <generator> section of UDDF
     func generatorElem() -> XMLNode {
-        return XMLNode(title: "generator",
+        return XMLNode(tag: "generator",
                        children: [
-                        XMLNode(title: "name", textContent: "awu2uddf"),
-                        XMLNode(title: "manufacturer",
+                        XMLNode(tag: "name", textContent: "awu2uddf"),
+                        XMLNode(tag: "manufacturer",
                                 attributes: ["id": "Foghead"],
-                                children: [XMLNode(title: "name", textContent: "Doug Junkins")]),
-                        XMLNode(title: "version", textContent: awu2uddf_version)])
+                                children: [XMLNode(tag: "name", textContent: "Doug Junkins")]),
+                        XMLNode(tag: "version", textContent: awu2uddf_version)])
     }
     
     // Build the <diver> section of UDDF
     func diverElem() -> XMLNode {
-        return XMLNode(title: "diver",
+        return XMLNode(tag: "diver",
                        children: [
-                        XMLNode(title: "owner", attributes: ["id": "owner"],
+                        XMLNode(tag: "owner", attributes: ["id": "owner"],
                                 children: [
-                                    XMLNode(title: "personal",
-                                            children: [XMLNode(title: "firstname"), XMLNode(title: "lastname")]),
-                                    XMLNode(title: "equipment",
+                                    XMLNode(tag: "personal",
+                                            children: [XMLNode(tag: "firstname"), XMLNode(tag: "lastname")]),
+                                    XMLNode(tag: "equipment",
                                             children: [
-                                                XMLNode(title: "divecomputer",
+                                                XMLNode(tag: "divecomputer",
                                                         attributes: ["id": "81333b70"],
                                                         children: [
-                                                            XMLNode(title: "name", textContent: "Apple Watch Ultra"),
-                                                            XMLNode(title: "model", textContent: "Apple Watch Ultra")])])]),
-                        XMLNode(title: "buddy")])
+                                                            XMLNode(tag: "name", textContent: "Apple Watch Ultra"),
+                                                            XMLNode(tag: "model", textContent: "Apple Watch Ultra")])])]),
+                        XMLNode(tag: "buddy")])
     }
     
     // Build the <profile> section of UDDF by matching depth samples with temperature samples
     func profileDataElements(startTime: Date, profile: [DepthSample], temps: [Date:TemperatureSample]) -> XMLNode {
         let samples = profile.map({ depthSample in
-            var children = [XMLNode(title: "depth", textContent: String(format: "%.3f", depthSample.depth)),
-                            XMLNode(title: "divetime",
+            var children = [XMLNode(tag: "depth", textContent: String(format: "%.3f", depthSample.depth)),
+                            XMLNode(tag: "divetime",
                                     textContent: String(format: "%.3f", depthSample.end.timeIntervalSinceReferenceDate - startTime.timeIntervalSinceReferenceDate))]
             if let tempSample = temps[depthSample.start] {
                 // UDDF measures temperatures in Kelvin, so add 273.15 to centrigrade temperature
-                children.append(XMLNode(title: "temperature", textContent: String(format: "%.1f", tempSample.temp + 273.15)))
+                children.append(XMLNode(tag: "temperature", textContent: String(format: "%.1f", tempSample.temp + 273.15)))
             }
-            return XMLNode(title: "waypoint", children: children)
+            return XMLNode(tag: "waypoint", children: children)
         })
         
-        return XMLNode(title: "profiledata",
+        return XMLNode(tag: "profiledata",
                        children: [
-                        XMLNode(title: "repetitiongroup", attributes: ["id": startTime.ISO8601Format()],
+                        XMLNode(tag: "repetitiongroup", attributes: ["id": startTime.ISO8601Format()],
                                 children: [
-                                    XMLNode(title: "dive", attributes: ["id": startTime.ISO8601Format()],
+                                    XMLNode(tag: "dive", attributes: ["id": startTime.ISO8601Format()],
                                             children: [
-                                                XMLNode(title: "informationbeforedive",
-                                                        children: [XMLNode(title: "datetime",
+                                                XMLNode(tag: "informationbeforedive",
+                                                        children: [XMLNode(tag: "datetime",
                                                                            textContent: startTime.getFormattedDate(format: "yyyy-MM-dd'T'HH:mm:ssZ"))]),
-                                                XMLNode(title: "samples", children: samples)])])])
+                                                XMLNode(tag: "samples", children: samples)])])])
     }
     
     func buildUDDFString (startTime: Date, profile: [DepthSample], temps: [TemperatureSample]) -> String {
         print ("Total Temps: \(temps.count)")
         let tempsByDate = Dictionary(grouping: temps, by: { temp in temp.start }).mapValues({ $0.first! })
         let doc = XMLDocument(rootNode:
-                                XMLNode(title: "uddf",
+                                XMLNode(tag: "uddf",
                                         attributes: ["xmlns": "http://www.streit.cc/uddf/3.2/",
                                                      "version": "3.2.0"],
                                         children: [
                                             generatorElem(),
                                             diverElem(),
-                                            XMLNode(title: "divesite"),
-                                            XMLNode(title: "gasdefinitions"),
+                                            XMLNode(tag: "divesite"),
+                                            XMLNode(tag: "gasdefinitions"),
                                             profileDataElements(startTime: startTime, profile: profile, temps: tempsByDate),
                                         ]))
         
