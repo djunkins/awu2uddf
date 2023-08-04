@@ -31,15 +31,9 @@ struct XMLNode {
     let attributes: [String:String]?
     let children: [Child]
     
-    init(title: String, attributes: [String : String]?, children: [XMLNode]) {
+    init(title: String, attributes: [String : String]? = nil, children: [XMLNode] = []) {
         self.title = title
         self.attributes = attributes
-        self.children = children.map({ .xml($0) })
-    }
-    
-    init(title: String, children: [XMLNode]) {
-        self.title = title
-        self.attributes = nil
         self.children = children.map({ .xml($0) })
     }
     
@@ -109,9 +103,7 @@ class UDDF {
                         XMLNode(title: "owner", attributes: ["id": "owner"],
                                 children: [
                                     XMLNode(title: "personal",
-                                            children: [
-                                                XMLNode(title: "firstname", children: []),
-                                                XMLNode(title: "lastname", children: [])]),
+                                            children: [XMLNode(title: "firstname"), XMLNode(title: "lastname")]),
                                     XMLNode(title: "equipment",
                                             children: [
                                                 XMLNode(title: "divecomputer",
@@ -119,7 +111,7 @@ class UDDF {
                                                         children: [
                                                             XMLNode(title: "name", textContent: "Apple Watch Ultra"),
                                                             XMLNode(title: "model", textContent: "Apple Watch Ultra")])])]),
-                        XMLNode(title: "buddy", children: [])])
+                        XMLNode(title: "buddy")])
     }
     
     // Build the <profile> section of UDDF by matching depth samples with temperature samples
@@ -157,8 +149,8 @@ class UDDF {
                                         children: [
                                             generatorElem(),
                                             diverElem(),
-                                            XMLNode(title: "divesite", children: []),
-                                            XMLNode(title: "gasdefinitions", children: []),
+                                            XMLNode(title: "divesite"),
+                                            XMLNode(title: "gasdefinitions"),
                                             profileDataElements(startTime: startTime, profile: profile, temps: tempsByDate),
                                         ]))
         
