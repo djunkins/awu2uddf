@@ -62,7 +62,7 @@ struct ContentView: View {
                                 Spacer()
                                 Button {
                                     if !showFilter {
-                                        filterDateStart = vm.diveList.last?.startTime ?? Date.now
+                                        filterDateStart = max(filterDateStart, vm.diveList.last?.startTime ?? Date.now)
                                     }
                                     showFilter = !showFilter
                                 } label: {
