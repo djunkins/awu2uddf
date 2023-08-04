@@ -82,7 +82,7 @@ struct XMLDocument {
 }
 
 // Class for building a UDDF XML string to store in file.
-// TODO: this could now just be a stand-alone function, it has no state...maybe a single static method
+// TODO: this could now just be a stand-alone function, it has no state...maybe a single static method, maybe a method on UDDFFile instead
 class UDDF {
     
     // Build the <generator> section of UDDF
