@@ -33,7 +33,7 @@ struct ContentView: View {
         VStack {
             if vm.isAuthorized {
                 NavigationView {
-
+                    
                     ZStack {
                         
                         NavigationLink {
@@ -115,32 +115,32 @@ struct ContentView: View {
                         }
                         
                     }
+                }
+            } else {
+                VStack {
+                    Text("Please Authorize Access")
+                        .font(.title3)
+                    Text("to Dive Data").font(.title3)
+                    
+                    Button {
+                        vm.healthRequest()
+                    } label: {
+                        Text("Authorize HealthKit")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .frame(width: 320, height: 55)
                     }
-                } else {
-                    VStack {
-                        Text("Please Authorize Access")
-                            .font(.title3)
-                        Text("to Dive Data").font(.title3)
-                        
-                        Button {
-                            vm.healthRequest()
-                        } label: {
-                            Text("Authorize HealthKit")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                                .frame(width: 320, height: 55)
-                        }
-                        .background(Color(.orange))
-                        .cornerRadius(10)
-                    }
+                    .background(Color(.orange))
+                    .cornerRadius(10)
                 }
             }
-                .padding()
-                .onAppear {
-                    vm.readDiveDepths()
-                }
-            
         }
+        .padding()
+        .onAppear {
+            vm.readDiveDepths()
+        }
+        
+    }
 }
 
 
