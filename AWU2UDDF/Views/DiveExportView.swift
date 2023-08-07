@@ -33,7 +33,7 @@ struct DiveExportView: View {
                     .foregroundColor(.white)
             }
             .frame(width: 320, height: 55)
-            .background(Color(.orange))
+            .background(.orange)
             .cornerRadius(10)
             .padding()
             .fileExporter(isPresented: $isExporting, document: UDDFFile(initialText: dive.buildUDDF(temps: temps)), contentType: UTType.xml, defaultFilename: dive.defaultUDDFFilename()) {      result in

@@ -36,18 +36,10 @@ class HealthKitViewModel: ObservableObject {
         
         print("Status is:", status)
         
-        switch status {
-        case .notDetermined:
-            isAuthorized = false
-        case .sharingDenied:
-            isAuthorized = false
-        case .sharingAuthorized:
-            DispatchQueue.main.async {
-                self.isAuthorized = true
-            }
-        @unknown default:
-            isAuthorized = false
-      }
+        DispatchQueue.main.async { [self] in
+            // Because the app only asks for read permission, not to write ("share") anything, status will either be `notDetermined` or `sharingDenied`
+            isAuthorized = status != .notDetermined
+        }
     }
     
     func readDiveDepths() {

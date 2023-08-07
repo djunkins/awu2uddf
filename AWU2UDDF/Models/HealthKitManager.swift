@@ -24,7 +24,7 @@ class HealthKitManager {
                 waterTemp
             ]
             
-            healthStore.requestAuthorization(toShare: [underwaterDepth], read: healthKitTypesToRead ) { success, error in
+            healthStore.requestAuthorization(toShare: [], read: healthKitTypesToRead ) { success, error in
                 if success {
                     readDepths()
                 } else if error != nil {
