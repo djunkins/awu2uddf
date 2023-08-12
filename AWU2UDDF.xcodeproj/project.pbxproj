@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A8CC7E92A7A943300E7F0E9 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A8CC7E82A7A943300E7F0E9 /* SettingsView.swift */; };
+		1A8CC7EB2A7AA08100E7F0E9 /* SettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A8CC7EA2A7AA08100E7F0E9 /* SettingsModel.swift */; };
 		A41468CA295AB5750047B5EB /* AWU2UDDFApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A41468C9295AB5750047B5EB /* AWU2UDDFApp.swift */; };
 		A41468CC295AB5750047B5EB /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A41468CB295AB5750047B5EB /* ContentView.swift */; };
 		A41468CE295AB5760047B5EB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A41468CD295AB5760047B5EB /* Assets.xcassets */; };
@@ -21,6 +23,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1A8CC7E82A7A943300E7F0E9 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		1A8CC7EA2A7AA08100E7F0E9 /* SettingsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsModel.swift; sourceTree = "<group>"; };
 		A41468C6295AB5750047B5EB /* AWU2UDDF.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AWU2UDDF.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A41468C9295AB5750047B5EB /* AWU2UDDFApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AWU2UDDFApp.swift; sourceTree = "<group>"; };
 		A41468CB295AB5750047B5EB /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -88,6 +92,7 @@
 			isa = PBXGroup;
 			children = (
 				A41468CB295AB5750047B5EB /* ContentView.swift */,
+				1A8CC7E82A7A943300E7F0E9 /* SettingsView.swift */,
 				A41468E1295AB6890047B5EB /* DiveRowView.swift */,
 				A41468E3295AB6AF0047B5EB /* DiveExportView.swift */,
 			);
@@ -102,6 +107,7 @@
 				A41468DB295AB5FD0047B5EB /* DiveModel.swift */,
 				A435F66D295E35CA00FE88C6 /* TempModel.swift */,
 				A41468DD295AB6280047B5EB /* UDDFModel.swift */,
+				1A8CC7EA2A7AA08100E7F0E9 /* SettingsModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -178,9 +184,11 @@
 			files = (
 				A41468DE295AB6280047B5EB /* UDDFModel.swift in Sources */,
 				A41468E2295AB6890047B5EB /* DiveRowView.swift in Sources */,
+				1A8CC7EB2A7AA08100E7F0E9 /* SettingsModel.swift in Sources */,
 				A41468CC295AB5750047B5EB /* ContentView.swift in Sources */,
 				A435F66E295E35CA00FE88C6 /* TempModel.swift in Sources */,
 				A41468CA295AB5750047B5EB /* AWU2UDDFApp.swift in Sources */,
+				1A8CC7E92A7A943300E7F0E9 /* SettingsView.swift in Sources */,
 				A41468E4295AB6AF0047B5EB /* DiveExportView.swift in Sources */,
 				A41468E7295ABA070047B5EB /* HealthKitViewModel.swift in Sources */,
 				A41468DA295AB5CA0047B5EB /* HealthKitManager.swift in Sources */,

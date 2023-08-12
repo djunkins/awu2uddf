@@ -12,42 +12,108 @@ struct ContentView: View {
     @State private var selection: Dive.ID?
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
+    @EnvironmentObject var settings: Settings
+    
+    @State private var showFilter: Bool = false
+    @State private var filterShortDives: Bool = false
+    @State private var filterDeepDives: Bool = false
+    @State private var filterDateStart: Date = Date.distantPast
+    @State private var filterDateEnd: Date = Date.now
+    
+    private var displayedDives: [Dive] {
+        get {
+            return vm.diveList
+                .filter({ dive in !filterShortDives || dive.Duration() > Double(settings.shortDiveDurationMinutes) * 60 })
+                .filter({ dive in !filterDeepDives || dive.MaxDepth() > settings.deepDiveDepthMetres })
+                .filter({ dive in dive.startTime >= filterDateStart && dive.startTime <= filterDateEnd})
+        }
+    }
+    
     var body: some View {
         VStack {
             if vm.isAuthorized {
                 NavigationView {
-
-                    VStack {
-
-                        Text("Dive List")
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
                     
-                        Text("Total Dive Count: \(vm.diveList.count)")
+                    ZStack {
                         
-                        HStack {
-                            Text("Dive Time")
-                                .frame(width: 140, alignment: .leading)
+                        NavigationLink {
+                            SettingsView()
+                                .navigationTitle("Settings")
+                        } label: {
+                            Image(systemName: "gear")
+                        }.position(x: 10, y: 10)
+                        
+                        VStack {
                             
-                            Text("Duration")
-                                .frame(width: 70, alignment: .trailing)
-
-                            Text("Max Depth")
-                                .frame(width: 60, alignment: .trailing)
-                        }
-
-                        if vm.diveList.count > 0 {
-                            List (vm.diveList, id: \.self) { dive in
-                                NavigationLink(destination: DiveExportView(dive:dive, temps: vm.temps)) {
-                                    DiveRowView(dive: dive)
+                            Text("Dive List")
+                                .font(.largeTitle)
+                                .fontWeight(.bold)
+                            
+                            Text("Total Dive Count: \(vm.diveList.count)")
+                            
+                            Text("Displayed Dive Count: \(displayedDives.count)")
+                                .font(.subheadline)
+                                .foregroundColor(vm.diveList.count == displayedDives.count
+                                                 ? Color.white.opacity(0)
+                                                 : .primary)
+                                .accessibilityHidden(vm.diveList.count == displayedDives.count)
+                            
+                            HStack {
+                                Spacer()
+                                Button {
+                                    if !showFilter {
+                                        filterDateStart = max(filterDateStart, vm.diveList.last?.startTime ?? Date.now)
+                                    }
+                                    showFilter = !showFilter
+                                } label: {
+                                    Image(systemName: "line.3.horizontal.decrease.circle\(showFilter ? ".fill" : "")")
                                 }
                             }
-                        } else {
-                            Spacer()
-                            Text("No dive data in HealthKit").fontWeight(.bold)
-                            Spacer()
-                            Spacer()
+                            
+                            if showFilter {
+                                VStack {
+                                    
+                                    Toggle("Longer than \(settings.shortDiveDurationMinutes) minutes", isOn: $filterShortDives)
+                                    
+                                    Toggle("Deeper than \(settings.displayDepth(metres: settings.deepDiveDepthMetres))", isOn: $filterDeepDives)
+                                    
+                                    HStack {
+                                        DatePicker("", selection: $filterDateStart,
+                                                   in: Date.distantPast...filterDateEnd,
+                                                   displayedComponents: .date)
+                                        Text(" to ").minimumScaleFactor(0.5)
+                                        DatePicker("", selection: $filterDateEnd,
+                                                   in: filterDateStart...Date.now,
+                                                   displayedComponents: .date)
+                                    }
+                                }.padding(.horizontal, 10)
+                            }
+                            
+                            HStack {
+                                Text("Dive Time")
+                                    .frame(width: 140, alignment: .leading)
+                                
+                                Text("Duration")
+                                    .frame(width: 70, alignment: .trailing)
+                                
+                                Text("Max Depth")
+                                    .frame(width: 60, alignment: .trailing)
+                            }
+                            
+                            if vm.diveList.count > 0 {
+                                List (displayedDives, id: \.self) { dive in
+                                    NavigationLink(destination: DiveExportView(dive:dive, temps: vm.temps)) {
+                                        DiveRowView(dive: dive)
+                                    }
+                                }
+                            } else {
+                                Spacer()
+                                Text("No dive data in HealthKit").fontWeight(.bold)
+                                Spacer()
+                                Spacer()
+                            }
                         }
+                        
                     }
                 }
             } else {
@@ -68,13 +134,12 @@ struct ContentView: View {
                     .cornerRadius(10)
                 }
             }
-            
         }
         .padding()
         .onAppear {
             vm.readDiveDepths()
         }
-    
+        
     }
 }
 
