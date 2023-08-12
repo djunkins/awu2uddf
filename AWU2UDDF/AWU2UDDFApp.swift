@@ -15,7 +15,7 @@ extension Date {
     }
 }
 
-let awu2uddf_version = "1.1(3)"
+let awu2uddf_version = "1.2(1)"
 
 @main
 struct AWU2UDDFApp: App {
