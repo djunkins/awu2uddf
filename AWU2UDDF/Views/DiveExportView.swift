@@ -54,7 +54,7 @@ struct DiveExportView: View {
                 .padding()
                 .opacity(exportDocument == nil ? 0.5 : 1)
                 .disabled(exportDocument == nil)
-                .fileExporter(isPresented: $isExporting, document: exportDocument, contentType: UTType.xml, defaultFilename: dive.defaultUDDFFilename()) {      result in
+                .fileExporter(isPresented: $isExporting, document: exportDocument, contentType: UTType.xml, defaultFilename: dive.defaultUDDFFilename()) { result in
                     switch result {
                     case .success(let url):
                         print("Saved to \(url)")
@@ -66,9 +66,9 @@ struct DiveExportView: View {
                     ProgressView()
                 }
             }
-                Spacer()
-                Spacer()
-            }
+            Spacer()
+            Spacer()
+        }
         .onAppear(perform: self.generateExportDocument)
     }
 }

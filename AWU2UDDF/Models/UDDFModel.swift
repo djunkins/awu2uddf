@@ -55,7 +55,7 @@ class UDDF {
     }
 
     // Build the <profile> section of UDDF by matching depth samples with temperature samples
-    func profileDataString(startTime: Date, profile: [Depth_Sample], temps: [Date:Temp_Sample]) -> String {
+    func profileDataString(startTime: Date, profile: [DepthSample], temps: [Date:TemperatureSample]) -> String {
         var xmlString = ""
 
         xmlString += "  <profiledata>\n"
