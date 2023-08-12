@@ -13,7 +13,7 @@ class HealthKitViewModel: ObservableObject {
     private var healthStore = HKHealthStore()
     private var healthKitManager = HealthKitManager()
     @Published var diveList: [Dive] = []
-    @Published var temps: [Temp_Sample] = []
+    @Published var temps: [TemperatureSample] = []
     @Published var isAuthorized = false
     
     let debug: Bool = false
@@ -96,7 +96,7 @@ class HealthKitViewModel: ObservableObject {
                 let depth: Double = Double(i)
                 let endDate = curDate.addingTimeInterval(10)
                 
-                let sample: Depth_Sample = .init(start: curDate, end: endDate, depth: depth)
+                let sample: DepthSample = .init(start: curDate, end: endDate, depth: depth)
                 sampleDive.profile.append(sample)
                 curDate = endDate
             }
@@ -104,7 +104,7 @@ class HealthKitViewModel: ObservableObject {
                 let depth: Double = Double(80-i)
                 let endDate = curDate.addingTimeInterval(10)
                 
-                let sample: Depth_Sample = .init(start: curDate, end: endDate, depth: depth)
+                let sample: DepthSample = .init(start: curDate, end: endDate, depth: depth)
                 sampleDive.profile.append(sample)
                 curDate = endDate
             }

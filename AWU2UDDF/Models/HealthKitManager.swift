@@ -64,8 +64,8 @@ class HealthKitManager {
                     if (diveList.isEmpty == false) {
                         print ("Dive Summary")
                         print ("  Start Time: ", dateFormatter.string(from: thisDiveStart!))
-                        print ("  Duration: ", Int((diveList.last!.Duration()+59.0)/60.0) as Any, "minutes")
-                        print ("  Max Depth: ", Int(diveList.last!.MaxDepth()) as Any, "meters")
+                        print ("  Duration: ", Int((diveList.last!.duration()+59.0)/60.0) as Any, "minutes")
+                        print ("  Max Depth: ", Int(diveList.last!.maxDepth()) as Any, "meters")
                     }
                     thisDiveStart = diveDates.start
                     diveList.append(Dive(startTime: thisDiveStart!))
@@ -73,7 +73,7 @@ class HealthKitManager {
                 lastDiveEnd = diveDates.end
                 let currentDive = diveList.last
                 
-                currentDive?.profile.append(Depth_Sample(start: diveDates.start, end: diveDates.end, depth: (result.doubleValue(for: HKUnit.meter()))))
+                currentDive?.profile.append(DepthSample(start: diveDates.start, end: diveDates.end, depth: (result.doubleValue(for: HKUnit.meter()))))
             }
 
             completion(diveList)
@@ -84,9 +84,9 @@ class HealthKitManager {
         
     }
 
-    func readWaterTemps(forToday: Date, healthStore: HKHealthStore, completion: @escaping ([Temp_Sample]) -> Void) {
+    func readWaterTemps(forToday: Date, healthStore: HKHealthStore, completion: @escaping ([TemperatureSample]) -> Void) {
         
-        var temps: [Temp_Sample] = []
+        var temps: [TemperatureSample] = []
 
         guard let waterTempType = HKQuantityType.quantityType(forIdentifier: .waterTemperature) else { return }
         
@@ -103,7 +103,7 @@ class HealthKitManager {
 //            print ("Temp Results: ", result)
             
             if let sampleDate = dates {
-                temps.append(Temp_Sample(start: sampleDate.start, end: sampleDate.end ,temp: result.doubleValue(for: HKUnit.degreeCelsius())))
+                temps.append(TemperatureSample(start: sampleDate.start, end: sampleDate.end ,temp: result.doubleValue(for: HKUnit.degreeCelsius())))
             }
             completion(temps)
         }

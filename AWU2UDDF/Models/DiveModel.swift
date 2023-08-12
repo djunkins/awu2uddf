@@ -8,7 +8,7 @@
 import Foundation
 import HealthKit
 
-class Depth_Sample {
+class DepthSample {
     var start : Date
     var end : Date
     var depth: Double
@@ -22,7 +22,7 @@ class Depth_Sample {
 
 class Dive: Identifiable, Hashable, Equatable {
     var startTime : Date
-    var profile: [Depth_Sample] = []
+    var profile: [DepthSample] = []
     var uddfFile: UDDF
     
     init (startTime: Date) {
@@ -38,23 +38,16 @@ class Dive: Identifiable, Hashable, Equatable {
         return lhs.startTime == rhs.startTime
     }
     
-    func MaxDepth () -> Double {
-        var maxDepth = 0.0
-        
-        for sample in self.profile {
-            if sample.depth > maxDepth {
-                maxDepth = sample.depth
-            }
-        }
-        return maxDepth
-        
+    func maxDepth() -> Double {
+        return profile.max(by: { s1, s2 in s1.depth <= s2.depth })?.depth ?? 0
     }
     
-    func AvgDepth () {
-        
+    func avgDepth() -> Double {
+        guard profile.count > 0 else { return 0 }
+        return profile.reduce(0, { total, sample in total + sample.depth }) / Double(profile.count)
     }
     
-    func Duration () -> Double {
+    func duration () -> Double {
         guard let endTime = profile.last?.end else {
             return 0.0
         }
@@ -64,7 +57,7 @@ class Dive: Identifiable, Hashable, Equatable {
         return duration
     }
        
-    func buildUDDF (temps: [Temp_Sample]) -> String {
+    func buildUDDF (temps: [TemperatureSample]) -> String {
         return uddfFile.buildUDDFString(startTime: self.startTime, profile: self.profile, temps: temps)
     }
     

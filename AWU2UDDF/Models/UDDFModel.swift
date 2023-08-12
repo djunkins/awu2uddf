@@ -15,19 +15,6 @@ class UDDF {
         self.uddfString = ""
     }
     
-    // Search for a temperature sample that has a particular start to the time interval
-    func searchTemps(date: Date, temps: [Temp_Sample]) -> Double {
-        for tempSample in temps {
-            if tempSample.start == date {
-                // matched a sample start time so return temperature
-                return tempSample.temp
-            }
-        }
-        
-        // return -999.9 if no matching sample is found
-        return -999.9
-    }
-
     // Build the <generator> section of UDDF
     func generatorString() -> String {
         var xmlString = ""
@@ -68,7 +55,7 @@ class UDDF {
     }
 
     // Build the <profile> section of UDDF by matching depth samples with temperature samples
-    func profileDataString(startTime: Date, profile: [Depth_Sample], temps: [Temp_Sample]) -> String {
+    func profileDataString(startTime: Date, profile: [DepthSample], temps: [Date:TemperatureSample]) -> String {
         var xmlString = ""
 
         xmlString += "  <profiledata>\n"
@@ -89,17 +76,14 @@ class UDDF {
 
             let depthMeters = sample.depth
 
-            // find the matching temperature sample if it exists
-            let tempCelcius = searchTemps(date: sample.start, temps: temps)
-
             xmlString += "          <waypoint>\n"
             xmlString += "            <depth>" + String(format: "%.3f", depthMeters) + "</depth>\n"
             xmlString += "            <divetime>" + String(format: "%.3f",sampleTime) + "</divetime>\n"
 
             // Check if temperature sample exists, and if so add the <temperature> reading to UDDF
             // string. UDDF measures temperatures in Kelvin, so add 273.15 to centrigrade temperature
-            if tempCelcius != -999.9 {
-                xmlString += "            <temperature>" + String(format: "%.1f", (tempCelcius + 273.15)) + "</temperature>\n"
+            if let tempSample = temps[sample.start] {
+                xmlString += "            <temperature>" + String(format: "%.1f", (tempSample.temp + 273.15)) + "</temperature>\n"
             }
             xmlString += "          </waypoint>\n"
         }
@@ -112,8 +96,9 @@ class UDDF {
         return xmlString
     }
     
-    func buildUDDFString (startTime: Date, profile: [Depth_Sample], temps: [Temp_Sample]) -> String {
+    func buildUDDFString (startTime: Date, profile: [DepthSample], temps: [TemperatureSample]) -> String {
         print ("Total Temps: \(temps.count)")
+        let tempsByDate = Dictionary(grouping: temps, by: { temp in temp.start }).mapValues({ $0.first! })
         self.uddfString = ""
         uddfString =  "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
         uddfString += "<uddf xmlns=\"http://www.streit.cc/uddf/3.2/\" version=\"3.2.0\">\n"
@@ -121,7 +106,7 @@ class UDDF {
         uddfString += diverString()
         uddfString += "  <divesite/>\n"
         uddfString += "  <gasdefinitions/>\n"
-        uddfString += profileDataString(startTime: startTime, profile: profile, temps: temps)
+        uddfString += profileDataString(startTime: startTime, profile: profile, temps: tempsByDate)
         uddfString += "</uddf>\n"
         return self.uddfString
     }

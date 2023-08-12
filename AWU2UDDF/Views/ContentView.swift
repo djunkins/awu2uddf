@@ -23,8 +23,8 @@ struct ContentView: View {
     private var displayedDives: [Dive] {
         get {
             return vm.diveList
-                .filter({ dive in !filterShortDives || dive.Duration() > Double(settings.shortDiveDurationMinutes) * 60 })
-                .filter({ dive in !filterDeepDives || dive.MaxDepth() > settings.deepDiveDepthMetres })
+                .filter({ dive in !filterShortDives || dive.duration() > Double(settings.shortDiveDurationMinutes) * 60 })
+                .filter({ dive in !filterDeepDives || dive.maxDepth() > settings.deepDiveDepthMetres })
                 .filter({ dive in dive.startTime >= filterDateStart && dive.startTime <= filterDateEnd})
         }
     }
