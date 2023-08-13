@@ -24,6 +24,10 @@ struct DiveExportView: View {
             }
         }
     }
+    private func setTemperatures() {
+        let tempsByDate = Dictionary(grouping: temps, by: { temp in temp.start }).mapValues({ $0.first! })
+        dive.setTemperatures(temps: tempsByDate)
+    }
     
     @EnvironmentObject var settings: Settings
     
@@ -37,8 +41,12 @@ struct DiveExportView: View {
             Text("Dive Time: \(settings.dateFormatter.string(from: dive.startTime))")
                 .font(.title3).padding()
             Text("Duration: \(Int((dive.duration() + 59.0) / 60.0)) min").padding()
-            Text("Max Depth: \(settings.displayDepth(metres: dive.maxDepth(), shortUnits: false))").padding()
-            Text("Average Depth: \(settings.displayDepth(metres: dive.avgDepth(), shortUnits: false))").padding()
+            VStack {
+                Text("Max Depth: \(settings.displayDepth(metres: dive.maxDepth(), shortUnits: false))").padding()
+                Text("Average Depth: \(settings.displayDepth(metres: dive.avgDepth(), shortUnits: false))").padding()
+                Text("Min Temperature: \(settings.displayTemp(celsius: dive.minTemp, shortUnits: true))").padding()
+                Text("Max Temperature: \(settings.displayTemp(celsius: dive.maxTemp, shortUnits: true))").padding()
+            }
     
             ZStack {
                 Button {
@@ -69,7 +77,10 @@ struct DiveExportView: View {
             Spacer()
             Spacer()
         }
-        .onAppear(perform: self.generateExportDocument)
+        .onAppear(perform: {
+            self.setTemperatures()
+            self.generateExportDocument()
+        })
     }
 }
 
