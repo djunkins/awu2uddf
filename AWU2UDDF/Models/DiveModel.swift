@@ -22,7 +22,9 @@ class DepthSample {
 
 class Dive: Identifiable, Hashable, Equatable {
     var startTime : Date
-    var profile: [DepthSample] = []
+    var profile : [DepthSample] = []
+    var maxTemp : Double = -999.99
+    var minTemp : Double = 999.99
     var uddfFile: UDDF
     
     init (startTime: Date) {
@@ -55,6 +57,22 @@ class Dive: Identifiable, Hashable, Equatable {
         let duration = endTime.timeIntervalSinceReferenceDate - startTime.timeIntervalSinceReferenceDate
         
         return duration
+    }
+    
+    func setTemperatures(temps: [Date:TemperatureSample]){
+        for sample in profile {
+            if let tempSample = temps[sample.start] {
+                if (minTemp > tempSample.temp) {
+                    minTemp = tempSample.temp
+                }
+                if (maxTemp < tempSample.temp) {
+                    maxTemp = tempSample.temp
+                }
+            }
+        }
+        
+        print ("Min temp: \(minTemp) °C")
+        print ("Max temp: \(maxTemp) °C")
     }
        
     func buildUDDF (temps: [TemperatureSample]) -> String {
