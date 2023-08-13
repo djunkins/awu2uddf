@@ -41,7 +41,7 @@ enum DisplayUnits {
     func dateFormat() -> String {
         switch self {
         case .imperial: return "MM/dd/yy h:mm a"
-        case .metric: return "yyyy-dd-MM HH:mm"
+        case .metric: return "yyyy-MM-dd HH:mm"
         case .canadian: return "dd/MM/yy h:mm a"
         }
     }
@@ -61,6 +61,24 @@ enum DisplayUnits {
             return "feet"
         case .metric:
             return "metres"
+        }
+    }
+    
+    func tempUnit() -> String {
+        switch self {
+        case .imperial:
+            return "°F"
+        case .metric, .canadian:
+            return "°C"
+        }
+    }
+    
+    func tempUnitLong() -> String {
+        switch self {
+        case .imperial:
+            return "Fahrenheit"
+        case .metric, .canadian:
+            return "Celsius"
         }
     }
 }
@@ -103,10 +121,26 @@ class Settings: ObservableObject {
         }
     }
     
+    func celsiusToTemp(_ celsius: Double) -> Double {
+        switch displayUnits {
+        case .imperial:
+            return (celsius*(9.0/5.0)) + 32
+        case .metric, .canadian:
+            return celsius
+        }
+    }
+    
     func displayDepth(metres: Double, shortUnits: Bool = true) -> String {
         let nf = NumberFormatter()
         nf.allowsFloats = true
-        nf.maximumFractionDigits = 1
+        nf.maximumFractionDigits = 0
         return "\(nf.string(for: metresToDistance(metres))!) \(shortUnits ? displayUnits.depthUnit() : displayUnits.depthUnitLong())"
+    }
+    
+    func displayTemp(celsius: Double, shortUnits: Bool = true) -> String {
+        let nf = NumberFormatter()
+        nf.allowsFloats = true
+        nf.maximumFractionDigits = 0
+        return "\(nf.string(for: celsiusToTemp(celsius))!) \(shortUnits ? displayUnits.tempUnit() : displayUnits.tempUnitLong())"
     }
 }
