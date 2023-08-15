@@ -36,12 +36,18 @@ struct ContentView: View {
                     
                     ZStack {
                         
-                        NavigationLink {
-                            SettingsView()
-                                .navigationTitle("Settings")
-                        } label: {
-                            Image(systemName: "gear")
-                        }.position(x: 10, y: 10)
+                        HStack(alignment: .top) {
+                            VStack(alignment: .leading) {
+                                NavigationLink {
+                                    SettingsView()
+                                        .navigationTitle("Settings")
+                                } label: {
+                                    Image(systemName: "gear")
+                                }
+                                Spacer()
+                            }
+                            Spacer()
+                        }
                         
                         VStack {
                             
@@ -86,7 +92,9 @@ struct ContentView: View {
                                                    in: filterDateStart...Date.now,
                                                    displayedComponents: .date)
                                     }
-                                }.padding(.horizontal, 10)
+                                }
+                                .padding(.horizontal, 10)
+                                .frame(maxWidth: UIScreen.main.bounds.width - 30)
                             }
                             
                             HStack {
