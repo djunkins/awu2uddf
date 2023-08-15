@@ -87,13 +87,25 @@ class UDDF {
     
     // Build the <generator> section of UDDF
     func generatorElem() -> XMLNode {
+        let comps = Calendar(identifier: .iso8601).dateComponents([.year, .month, .day, .weekday, .hour, .minute], from: Date())
         return XMLNode(tag: "generator",
                        children: [
                         XMLNode(tag: "name", textContent: "awu2uddf"),
                         XMLNode(tag: "manufacturer",
                                 attributes: ["id": "Foghead"],
                                 children: [XMLNode(tag: "name", textContent: "Doug Junkins")]),
-                        XMLNode(tag: "version", textContent: awu2uddf_version)])
+                        XMLNode(tag: "version", textContent: awu2uddf_version),
+                        XMLNode(tag: "date", children: [
+                            XMLNode(tag: "year", textContent: "\(comps.year!)"),
+                            XMLNode(tag: "month", textContent: "\(comps.month!)"),
+                            XMLNode(tag: "day", textContent: "\(comps.day!)"),
+                            XMLNode(tag: "dayofweek", textContent: "\(comps.weekday! - 1)"),
+                        ]),
+                        XMLNode(tag: "time", children: [
+                            XMLNode(tag: "hour", textContent: "\(comps.hour!)"),
+                            XMLNode(tag: "minute", textContent: "\(comps.minute!)"),
+                        ])
+                       ])
     }
     
     // Build the <diver> section of UDDF
