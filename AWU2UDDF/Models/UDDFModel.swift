@@ -148,7 +148,13 @@ class UDDF {
                                                 XMLNode(tag: "informationbeforedive",
                                                         children: [XMLNode(tag: "datetime",
                                                                            textContent: startTime.getFormattedDate(format: "yyyy-MM-dd'T'HH:mm:ssZ"))]),
-                                                XMLNode(tag: "samples", children: samples)])])])
+                                                XMLNode(tag: "samples", children: samples),
+                                                XMLNode(tag: "informationafterdive",
+                                                        children: [XMLNode(tag: "diveduration",
+                                                                           textContent: String(format: "%.3f",
+                                                                                               (profile.last?.end ?? startTime).timeIntervalSinceReferenceDate - startTime.timeIntervalSinceReferenceDate)),
+                                                                   XMLNode(tag: "greatestdepth", textContent: String(format: "%.3f", profile.map({ $0.depth }).max() ?? 0))
+                                                        ])])])])
     }
     
     func buildUDDFString (startTime: Date, profile: [DepthSample], temps: [TemperatureSample]) -> String {
