@@ -133,7 +133,7 @@ class Settings: ObservableObject {
     func displayDepth(metres: Double, shortUnits: Bool = true) -> String {
         let nf = NumberFormatter()
         nf.allowsFloats = true
-        nf.maximumFractionDigits = 0
+        nf.maximumFractionDigits = 1
         return "\(nf.string(for: metresToDistance(metres))!) \(shortUnits ? displayUnits.depthUnit() : displayUnits.depthUnitLong())"
     }
     
