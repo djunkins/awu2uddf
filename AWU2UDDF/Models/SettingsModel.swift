@@ -11,6 +11,7 @@ import SwiftUI
 fileprivate let DISPLAY_UNITS_KEY = "displayUnitsKey"
 fileprivate let SHORT_DIVE_DURATION_KEY = "shortDiveDurationKey"
 fileprivate let DEEP_DIVE_DEPTH_KEY = "deepDiveDepthKey"
+fileprivate let EXPORT_WATER_TEMP_KEY = "exportWaterTempKey"
 
 enum DisplayUnits {
     case imperial
@@ -97,6 +98,7 @@ class Settings: ObservableObject {
     
     @AppStorage(DEEP_DIVE_DEPTH_KEY) var deepDiveDepthMetres: Double = 20
     
+    @AppStorage(EXPORT_WATER_TEMP_KEY) var exportTemps: Bool = true
     init() {
         displayUnits = DisplayUnits.fromDefaults()
         dateFormatter = DateFormatter()

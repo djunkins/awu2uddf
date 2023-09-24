@@ -99,9 +99,6 @@ class HealthKitManager {
                 return
             }
  
-//            print ("Temp Dates: ", dates)
-//            print ("Temp Results: ", result)
-            
             if let sampleDate = dates {
                 temps.append(TemperatureSample(start: sampleDate.start, end: sampleDate.end ,temp: result.doubleValue(for: HKUnit.degreeCelsius())))
             }

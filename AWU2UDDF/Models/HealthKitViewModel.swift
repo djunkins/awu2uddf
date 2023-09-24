@@ -74,6 +74,7 @@ class HealthKitViewModel: ObservableObject {
         }
     }
     
+    // Preview Data is used to build sample data when in Debug mode and Healthkit datastore does not have Depth information.
     func previewData() -> [Dive] {
         var sampleDive: Dive
         var sampleDives: [Dive] = []

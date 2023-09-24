@@ -30,5 +30,6 @@ struct DiveRowView: View {
 struct DiveRowView_Previews: PreviewProvider {
     static var previews: some View {
         DiveRowView(dive: Dive(startTime: Date.now))
+            .environmentObject(Settings())
     }
 }

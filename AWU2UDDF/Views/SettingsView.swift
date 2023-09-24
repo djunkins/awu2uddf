@@ -10,7 +10,7 @@ import SwiftUI
 struct SettingsView: View {
     
     @EnvironmentObject var settings: Settings
-    
+     
     private enum EditingField: Int, CaseIterable {
         case shortTime, deepDepth
     }
@@ -43,6 +43,11 @@ struct SettingsView: View {
                 }
             }
             
+            HStack {
+                Toggle("Export Water Temperatures", isOn: $settings.exportTemps)
+                Spacer()
+                
+            }
             HStack {
                 Text("\"Short dive\" time")
                 Spacer()
@@ -82,5 +87,6 @@ struct SettingsView: View {
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         SettingsView()
+            .environmentObject(Settings())
     }
 }

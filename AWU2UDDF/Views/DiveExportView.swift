@@ -16,20 +16,31 @@ struct DiveExportView: View {
     
     @State private var exportDocument: UDDFFile? = nil
     
+    @EnvironmentObject var settings: Settings
+    
     private func generateExportDocument() {
-        DispatchQueue.global(qos: .userInitiated).async { [self] in
-            let document = UDDFFile(initialText: dive.buildUDDF(temps: temps))
-            DispatchQueue.main.async { [self] in
-                self.exportDocument = document
+        if (settings.exportTemps) {
+            DispatchQueue.global(qos: .userInitiated).async { [self] in
+                let document = UDDFFile(initialText: dive.buildUDDF(temps: temps))
+                DispatchQueue.main.async { [self] in
+                    self.exportDocument = document
+                }
             }
+        } else {
+            DispatchQueue.global(qos: .userInitiated).async { [self] in
+                let document = UDDFFile(initialText: dive.buildUDDF(temps: []))
+                DispatchQueue.main.async { [self] in
+                    self.exportDocument = document
+                }
+            }
+
         }
     }
+    
     private func setTemperatures() {
         let tempsByDate = Dictionary(grouping: temps, by: { temp in temp.start }).mapValues({ $0.first! })
         dive.setTemperatures(temps: tempsByDate)
     }
-    
-    @EnvironmentObject var settings: Settings
     
     var body: some View {
         VStack {
@@ -44,8 +55,10 @@ struct DiveExportView: View {
             VStack {
                 Text("Max Depth: \(settings.displayDepth(metres: dive.maxDepth(), shortUnits: false))").padding()
                 Text("Average Depth: \(settings.displayDepth(metres: dive.avgDepth(), shortUnits: false))").padding()
-                Text("Min Temperature: \(settings.displayTemp(celsius: dive.minTemp, shortUnits: true))").padding()
-                Text("Max Temperature: \(settings.displayTemp(celsius: dive.maxTemp, shortUnits: true))").padding()
+                if (settings.exportTemps) {
+                    Text("Min Temperature: \(settings.displayTemp(celsius: dive.minTemp, shortUnits: true))").padding()
+                    Text("Max Temperature: \(settings.displayTemp(celsius: dive.maxTemp, shortUnits: true))").padding()
+                }
             }
     
             ZStack {
@@ -87,6 +100,7 @@ struct DiveExportView: View {
 struct DiveExportView_Previews: PreviewProvider {
     static var previews: some View {
         DiveExportView(dive: Dive(startTime: Date.now), temps: [])
+            .environmentObject(Settings())
     }
 }
 
