@@ -23,10 +23,10 @@ class HealthKitViewModel: ObservableObject {
         changeAuthorizationStatus()
     }
     
-    func healthRequest() {
+    func healthRequest(startDate: Date, endDate: Date) {
         healthKitManager.setUpHealthRequest(healthStore: healthStore) {
             self.changeAuthorizationStatus()
-            self.readDiveDepths()
+            self.readDiveDepths(startDate: startDate, endDate: endDate)
         }
     }
     
@@ -42,11 +42,11 @@ class HealthKitViewModel: ObservableObject {
         }
     }
     
-    func readDiveDepths() {
-        print ("Reading Dive Depths")
+    func readDiveDepths(startDate: Date, endDate: Date) {
+        print ("Reading Dive Depths: ", startDate, " to ", endDate)
         var diveCount: Int = 0
         
-        healthKitManager.readUnderwaterDepths(forToday: Date(), healthStore: healthStore) {
+        healthKitManager.readUnderwaterDepths(startDate: startDate, endDate: endDate, healthStore: healthStore) {
             diveQuery in
             if diveQuery.count > diveCount {
                 let sortedDives = diveQuery.sorted(by: { $0.startTime.compare($1.startTime) == .orderedDescending })
@@ -66,7 +66,7 @@ class HealthKitViewModel: ObservableObject {
                 }
             }
         }
-        healthKitManager.readWaterTemps(forToday: Date(), healthStore: healthStore) {
+        healthKitManager.readWaterTemps(startDate: startDate, endDate: endDate, healthStore: healthStore) {
             tempSamples in
             DispatchQueue.main.async {
                 self.temps = tempSamples
@@ -79,7 +79,7 @@ class HealthKitViewModel: ObservableObject {
         var sampleDive: Dive
         var sampleDives: [Dive] = []
         
-        let dateString = "10/28/2000 14:38"
+        let dateString = "1/28/2024 14:38"
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MM/dd/yy HH:mm"
         guard let startDate: Date = dateFormatter.date(from: dateString) else {
@@ -94,7 +94,7 @@ class HealthKitViewModel: ObservableObject {
             sampleDive = .init(startTime: curDate)
 
             for i in stride(from: 1, to: 80, by: 1) {
-                let depth: Double = Double(i)
+                let depth: Double = Double(i/3)
                 let endDate = curDate.addingTimeInterval(10)
                 
                 let sample: DepthSample = .init(start: curDate, end: endDate, depth: depth)
@@ -102,7 +102,7 @@ class HealthKitViewModel: ObservableObject {
                 curDate = endDate
             }
             for i in stride(from: 1, to: 80, by: 1) {
-                let depth: Double = Double(80-i)
+                let depth: Double = Double((80-i)/3)
                 let endDate = curDate.addingTimeInterval(10)
                 
                 let sample: DepthSample = .init(start: curDate, end: endDate, depth: depth)
@@ -111,7 +111,7 @@ class HealthKitViewModel: ObservableObject {
             }
 
             sampleDives.append(sampleDive)
-            curDate = curDate.addingTimeInterval(120)
+            curDate = curDate.addingTimeInterval(84780)
 
         }
         print ("Sample Dive Count: ", sampleDives.count)

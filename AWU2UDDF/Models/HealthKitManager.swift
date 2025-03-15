@@ -34,7 +34,7 @@ class HealthKitManager {
         }
     }
     
-    func readUnderwaterDepths(forToday: Date, healthStore: HKHealthStore, completion: @escaping ([Dive]) -> Void) {
+    func readUnderwaterDepths(startDate: Date, endDate: Date, healthStore: HKHealthStore, completion: @escaping ([Dive]) -> Void) {
         
         var diveList: [Dive] = []
         var lastDiveEnd: Date? = nil
@@ -45,7 +45,9 @@ class HealthKitManager {
         
         guard let underwaterDepthType = HKQuantityType.quantityType(forIdentifier: .underwaterDepth) else { return }
 
-        let query = HKQuantitySeriesSampleQuery(quantityType: underwaterDepthType, predicate: nil) {
+        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: HKQueryOptions.strictEndDate)
+
+        let query = HKQuantitySeriesSampleQuery(quantityType: underwaterDepthType, predicate: predicate) {
             query, result, dates, samples, done, error  in
 
             guard let result = result else {
@@ -84,13 +86,14 @@ class HealthKitManager {
         
     }
 
-    func readWaterTemps(forToday: Date, healthStore: HKHealthStore, completion: @escaping ([TemperatureSample]) -> Void) {
+    func readWaterTemps(startDate: Date, endDate: Date, healthStore: HKHealthStore, completion: @escaping ([TemperatureSample]) -> Void) {
         
         var temps: [TemperatureSample] = []
 
         guard let waterTempType = HKQuantityType.quantityType(forIdentifier: .waterTemperature) else { return }
-        
-        let query = HKQuantitySeriesSampleQuery(quantityType: waterTempType, predicate: nil) {
+        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: HKQueryOptions.strictEndDate)
+
+        let query = HKQuantitySeriesSampleQuery(quantityType: waterTempType, predicate: predicate) {
             query, result, dates, samples, done, error  in
 
             guard let result = result else {

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Foundation
 
 struct ContentView: View {
     @EnvironmentObject var vm: HealthKitViewModel
@@ -17,7 +18,7 @@ struct ContentView: View {
     @State private var showFilter: Bool = false
     @State private var filterShortDives: Bool = false
     @State private var filterDeepDives: Bool = false
-    @State private var filterDateStart: Date = Date.distantPast
+    @State private var filterDateStart: Date = (Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date.distantPast)
     @State private var filterDateEnd: Date = Date.now
     
     private var displayedDives: [Dive] {
@@ -86,11 +87,15 @@ struct ContentView: View {
                                     HStack {
                                         DatePicker("", selection: $filterDateStart,
                                                    in: Date.distantPast...filterDateEnd,
-                                                   displayedComponents: .date)
+                                                   displayedComponents: .date).onChange(of: filterDateStart, perform: {value in
+                                                        vm.healthRequest(startDate: filterDateStart, endDate: filterDateEnd)
+                                                    });
                                         Text(" to ").minimumScaleFactor(0.5)
                                         DatePicker("", selection: $filterDateEnd,
                                                    in: filterDateStart...Date.now,
-                                                   displayedComponents: .date)
+                                                   displayedComponents: .date).onChange(of: filterDateEnd, perform: {value in
+                                            vm.healthRequest(startDate: filterDateStart, endDate: filterDateEnd)
+                                        });
                                     }
                                 }
                                 .padding(.horizontal, 10)
@@ -131,7 +136,7 @@ struct ContentView: View {
                     Text("to Dive Data").font(.title3)
                     
                     Button {
-                        vm.healthRequest()
+                        vm.healthRequest(startDate: filterDateStart, endDate: filterDateEnd)
                     } label: {
                         Text("Authorize HealthKit")
                             .font(.headline)
@@ -145,7 +150,7 @@ struct ContentView: View {
         }
         .padding()
         .onAppear {
-            vm.readDiveDepths()
+            vm.readDiveDepths(startDate: filterDateStart, endDate: filterDateEnd)
         }
         
     }
